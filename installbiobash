@@ -1,0 +1,80 @@
+#!/bin/bash
+
+default="/usr/local/bin"
+
+
+echo "
+
+#
+            BIOBASH INSTALLATION
+Bioinformatics and Systems Biology Laboratory
+            Institute for Genetics
+        National University of Colombia
+#
+
+
+"
+
+failure=" == WARNING! Unable to install BIOBASH =="
+
+BBVERSION=$(cat version)
+
+echo  "Hit ENTER to use the default installation directory ($default) or provide a
+valid installation path below:"
+read -p " > " dir
+
+if [ -z "$dir" ]; then
+
+    installDir=$default
+else
+    installDir=$dir
+fi
+
+
+
+# Does it exist?
+if [ -d "$installDir" ];then
+    
+    # Is it writable?
+    if [ -w "$installDir" ];then
+	
+       #-----------------------------------------
+       # MAIN INSTALLATION
+       #-----------------------------------------
+        BBHOME=$(echo $installDir/$BBVERSION)
+        echo "Installing to: $BBHOME"
+	mkdir $BBHOME
+
+ 	
+	# 
+	# ROUTINE TO CREATE: env.sh file
+	#
+	./create_environment_file.sh $BBHOME
+	mv env.sh $BBHOME
+
+	#Future version need a better selection of what to install.
+        cp -r ./ $BBHOME
+
+
+        echo "Installation complete. Thank you for installing BIOBASH
+        
+        "
+    else
+
+    
+    echo $failure
+    echo " "
+    echo "$installDir is not writable.Please make sure you have write access."
+    echo "  "
+
+    fi
+
+    
+else
+    echo $failure
+    echo "  "
+    echo "  The directory you just typed ($installDir) does not exist."
+    echo "  Please make sure route is correct"
+    echo " "
+fi
+
