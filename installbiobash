@@ -49,7 +49,12 @@ if [ -d "$installDir" ];then
 	# 
 	# ROUTINE TO CREATE: env.sh file
 	#
+
+	# Creates the env.sh file with absolute paths.
 	./create_environment_file.sh $BBHOME
+	# This copy is a kind of backup file, useful on development
+	cp env.sh env.usr.sh
+	# Move the created file to final destination.
 	mv env.sh $BBHOME
 
 	#Future version need a better selection of what to install.
