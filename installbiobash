@@ -41,24 +41,19 @@ if [ -d "$installDir" ];then
        #-----------------------------------------
        # MAIN INSTALLATION
        #-----------------------------------------
-        BBHOME=$(echo $installDir/$BBVERSION)
-        echo "Installing to: $BBHOME"
-	mkdir $BBHOME
+
+        BIOBASH_HOME=$(echo $installDir/$BBVERSION)
+        echo "Installing to: $BIOBASH_HOME"
+	mkdir $BIOBASH_HOME
 
  	
-	# 
-	# ROUTINE TO CREATE: env.sh file
-	#
 
-	# Creates the env.sh file with absolute paths.
-	./create_environment_file.sh $BBHOME
-	# This copy is a kind of backup file, useful on development
-	cp env.sh env.usr.sh
-	# Move the created file to final destination.
-	mv env.sh $BBHOME
+	# This routine puts all needed variables into bashrc
+	./setup_environment.sh $BIOBASH_HOME
 
 	#Future version need a better selection of what to install.
-        cp -r ./ $BBHOME
+        cp -r ./lib $BIOBASH_HOME
+        cp *.sh ./lib $BIOBASH_HOME
 
 
         echo "Installation complete. Thank you for installing BIOBASH

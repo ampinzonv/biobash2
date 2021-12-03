@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This is a simple development file that checks that libraries
 # are in the path and functions can be retrieved.
 
 # Sourcing environmental file. 
 # This file shall be the env.dev.sh file renamed.
-
-p=$(realpath $0)
-SCRIPT_DIR=$(dirname $p)
-
-source "$SCRIPT_DIR/env.sh"
+echo "lib: $SHML_LIB"
+echo "home: $HOME"
+source $SHML_LIB
+source $BASHUTILITY_LIB
+source $BB_NATIVE_LIB
 
 # The following functions are called from SHML library.
 # https://odb.github.io/shml/getting-started/
@@ -40,3 +40,5 @@ string="holamundo"
 array=( $(string::split "a,b,c" ",") )
 printf "%s\n" ${array[@]}
 
+## TESTING NATIVE  ##
+feedback::saythis "I am a warning" "warn"
