@@ -41,4 +41,8 @@ array=( $(string::split "a,b,c" ",") )
 printf "%s\n" ${array[@]}
 
 ## TESTING NATIVE  ##
-feedback::saythis "I am a warning" "warn"
+feedback::sayfrom "I am a warning" "warn"
+echo "Saying with say:"
+feedback::say "I am an error message" "error"
+
+

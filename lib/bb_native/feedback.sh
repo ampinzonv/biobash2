@@ -1,37 +1,65 @@
 #!/usr/bin/env bash
 source $BIOBASH_HOME/lib/shml/shml.sh
 
-feedback::saythis()
+# @file Feedback
+# @brief Functions to handle user feedback and message prompting
+
+# @description Displays a message and file name from where message is generated.
+#
+# @example
+# 	feedback::sayfrom "I am a warning" "warn"
+# 	feedback::sayfrom "I am an error" "error"
+# 	feedback::sayfrom "I am just a message" "msg"
+# 	feedback::sayfrom "I am a succesful messahe" "success"
+#
+# @arg $1 What you want to say
+# @arg $2 Type of message (warn, error, msg or success).
+feedback::sayfrom()
 {
-  RED='\033[0;31m'
-  PURPLE='\033[0;35m'
-  GREEN='\033[0;32m'
-  CYAN='\033[0;36m'
-  BLUE='\033[0;34m'
-  YELLOW='\033[0;33m'
-  NC='\033[0m' # No Color	
 
 if [ $2 = "error" ]; then
-  color=$PURPLE
+  color="red"
 elif [ $2 = "warn" ]; then 
-  color=$YELLOW 
+  color="lightyellow" 
 elif [ $2 = "msg" ]; then 
-  color=$BLUE
+  color="blue"
 elif [ $2 = "success" ]; then 
-  color=$GREEN
+  color="green"
  else
-   color=$NC
+   color="darkgray"
 fi
 
-  echo ""
-  printf " ${CYAN}Message from: $0 ${NC}"
-  echo ""
-  printf " ${color}$1 ${NC}"
-  echo ""
-  echo ""
+echo $(fgcolor lightblue "Message from: $0") $(fgcolor end)
+echo $(fgcolor $color "$1") $(fgcolor end)
 
-  echo "SAYING WITH SHML:"
-echo $(fgcolor yellow "Message from: $0") $(fgcolor end)
-echo $(bgc green yellow "$1") $(bgc end)
 }
 
+
+# @description Displays a message.
+#
+# @example
+# 	feedback::say "I am a warning" "warn"
+# 	feedback::say "I am an error" "error"
+# 	feedback::say "I am just a message" "msg"
+# 	feedback::say "I am a succesful messahe" "success"
+#
+# @arg $1 What you want to say
+# @arg $2 Type of message (warn, error, msg or success).
+feedback::say()
+{
+
+if [ $2 = "error" ]; then
+  color="magenta"
+elif [ $2 = "warn" ]; then 
+  color="lightyellow" 
+elif [ $2 = "msg" ]; then 
+  color="blue"
+elif [ $2 = "success" ]; then 
+  color="green"
+ else
+   color="gray"
+fi
+
+echo $(fgcolor $color "$1") $(fgcolor end)
+
+}

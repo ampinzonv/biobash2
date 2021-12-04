@@ -1,3 +1,6 @@
+2021-12-03
+* Defined a new feedback function "say" on bb_native library.
+
 2021-12-02
 * Environmental variables now go harcoded on .bashrc file
 
