@@ -1,3 +1,6 @@
+2021-12-06
+* Added seqtk installer.
+
 2021-12-03
 * Defined a new feedback function "say" on bb_native library.
 

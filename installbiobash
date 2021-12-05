@@ -46,13 +46,19 @@ if [ -d "$installDir" ];then
         echo "Installing to: $BIOBASH_HOME"
 	mkdir $BIOBASH_HOME
 
- 	
+ 	#Check pre-requisites
+	# gcc, zlib, wget or curl, unzip
+
+	# install seqtk
+	./install_seqtk.sh
 
 	# This routine puts all needed variables into bashrc
 	./setup_environment.sh $BIOBASH_HOME
 
 	#Future version need a better selection of what to install.
         cp -r ./lib $BIOBASH_HOME
+        cp -r ./bin $BIOBASH_HOME
+        cp -r ./tmp $BIOBASH_HOME
         cp *.sh ./lib $BIOBASH_HOME
 
 

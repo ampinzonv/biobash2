@@ -174,6 +174,7 @@ bufile () { cp $1 ./`basename $1`-`date +%Y%m%d%H%M`.backup ; }
 
 BIOBASH_HOME=./
 BIOBASH_LIB=lib 
+BIOBASH_BIN=bin
 SHML_LIB=lib/shml/shml.sh
 BASHUTILITY_LIB_PATH=lib/bash-utility
 BASHUTILITY_LIB=lib/bash-utility/bash_utility.sh
@@ -185,9 +186,9 @@ BB_NATIVE_LIB=lib/bb_native/bb_native.sh
 
 export BIOBASH_HOME
 export BIOBASH_LIB 
+export BIOBASH_BIN 
 export SHML_LIB
 export BASHUTILITY_LIB_PATH
-export BASHUTILITY_LIB
 export BASHUTILITY_LIB
 export BB_NATIVE_LIB_PATH
 export BB_NATIVE_LIB
