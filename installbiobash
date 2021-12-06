@@ -47,7 +47,8 @@ if [ -d "$installDir" ];then
 	mkdir $BIOBASH_HOME
 
  	#Check pre-requisites
-	# gcc, zlib, wget or curl, unzip
+	# gcc, zlib, wget or curl, unzip, EMBOSS.
+	./check_dependencies.sh
 
 	# install seqtk
 	./install_seqtk.sh
