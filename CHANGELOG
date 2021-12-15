@@ -1,3 +1,6 @@
+2021-12-15
+* Stripped template bashrc. Left only strictly neccesary variables.
+
 2021-12-05
 * Added check dependencies script.
 * Added seqtk installer.
