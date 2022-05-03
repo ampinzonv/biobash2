@@ -1,8 +1,13 @@
 #!/bin/bash
+#
+# Performs the installation of BIOBASH.
+#
 
+# We are assuming a standard installation on a Linux Machine (at least
+# for now). This is the default directory for installation.
 default="/usr/local/bin"
 
-
+# Some propaganda/user feedback.
 echo "
 
 #
@@ -14,7 +19,7 @@ Bioinformatics and Systems Biology Laboratory
 
 
 "
-
+#Use this message if something goes wrong.
 failure=" == WARNING! Unable to install BIOBASH =="
 
 BBVERSION=$(cat version)
@@ -23,15 +28,23 @@ echo  "Hit ENTER to use the default installation directory ($default) or provide
 valid installation path below:"
 read -p " > " dir
 
+#If user hitted ENTER, $dir comes empty, so use default install dir.
+#Otherwise use user provided path.
 if [ -z "$dir" ]; then
 
     installDir=$default
+    
 else
     installDir=$dir
 fi
 
 
+#A BETTER SOLUTION HERE IS CHECK THAT DIRECTORY DO NOT EXIST AND THEN EXIT:
+# https://www.linuxquestions.org/questions/linux-newbie-8/check-if-directory-does-not-exist-in-bash-806969/
 
+
+#Wether install will be performed on user defined or default install dir, it is
+# important to make sure that it exists and that we can write on it.
 # Does it exist?
 if [ -d "$installDir" ];then
     
@@ -75,7 +88,6 @@ if [ -d "$installDir" ];then
     echo "  "
 
     fi
-
     
 else
     echo $failure
