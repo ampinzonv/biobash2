@@ -3,22 +3,42 @@
 # Performs the installation of BIOBASH.
 #
 
-# We are assuming a standard installation on a Linux Machine (at least
-# for now). This is the default directory for installation.
-default="/usr/local"
+source lib/shml/shml.sh
 
 # Some propaganda/user feedback.
 echo "
 
-###
-            BIOBASH INSTALLATION
-Bioinformatics and Systems Biology Laboratory
-            Institute for Genetics
-        National University of Colombia
-###
-
-
+$(fgcolor green 'BIOBASH INSTALLATION') $(fgcolor end)       
+$(fgcolor green 'Bioinformatics and Systems Biology Laboratory') $(fgcolor end)
+$(fgcolor green 'Institute for Genetics -  National University of Colombia') $(fgcolor end)
 "
+
+########
+#BEFORE ATTEMPTING ANYTHING... check pre-requisites.
+########
+./check_dependencies.sh
+
+#If check dependencies was succesful it creates a "flag" file: depende_ok
+#otherwise (file doesn`t exist) there are dependencies to be met. Stop installation.
+
+if [[ ! -e depend_ok ]];then
+	
+	echo "Quitting installation of BioBash.
+	"
+	exit 1
+fi
+
+echo "success!!!"
+exit 0
+
+
+
+
+
+# We are assuming a standard installation on a Linux Machine (at least
+# for now). This is the default directory for installation.
+default="/usr/local"
+
 
 
 echo  "Hit ENTER to use the default installation directory ($default) or provide a
@@ -64,6 +84,8 @@ fi
 # MAIN INSTALLATION
 #-----------------------------------------
 
+
+
 #This is KEY. Everything will be referenced to this path.
 BBVERSION=$(cat version)
 BIOBASH_HOME=$(echo $installDir/$BBVERSION)
@@ -71,11 +93,10 @@ BIOBASH_HOME=$(echo $installDir/$BBVERSION)
 #User feedback
 echo "Installing to: $BIOBASH_HOME"
 
-mkdir $BIOBASH_HOME
+#Create BIOBASH directory. The "-p" option is useful when re-trying the installation multiple times,
+#so if the directory was created before it won't complain because directory already exists.
+mkdir -p $BIOBASH_HOME
 
- 	#Check pre-requisites
-	# gcc, zlib, wget or curl, unzip, EMBOSS.
-	#./check_dependencies.sh
 
 	# install seqtk
 	#./install_seqtk.sh
