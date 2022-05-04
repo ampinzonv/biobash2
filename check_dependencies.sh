@@ -10,14 +10,50 @@
 source lib/bash-utility/src/check.sh
 source lib/shml/shml.sh
 
-soft=('gcc' 'zcat' 'wget' 'curl' 'unzip' 'gnuplot' 'xargs')
+soft=('gcc' 'zcat' 'wget' 'unzip' 'gnuplot' 'xargs')
 
 echo "
-Before running BioBash installation I must check that software dependencies are met.
+Before running BioBash installation I must check that some software dependencies are met.
 These are basic components that BioBash needs for its functionality. If any of them
-is missing BioBash performance will be compromised, so installation should be stopped.
+is missing this installation will be stopped.
+This is a safe procedure that  WILL NOT compromise any of your files, installed programs or your system integrity. 
 
 "
+
+#Flow control. Answer should be "y" or "n"
+continue=0
+
+until [ $continue  == "y" ] || [ $continue == "n" ]
+do
+
+    read -p 'Proceed? [y/n]: ' continue
+
+done
+
+if [[ $continue == "n" ]]; then
+    
+    echo "
+    Thank you for your interest in BioBash.
+    Nothing done. Quitting installation.
+    
+    Bye!
+    
+    "
+    exit 0
+    
+elif [[ $continue == "y" ]];then
+
+    echo " "
+    
+else
+
+    echo "ERROR: Installation can not proceed. Unknown reason."
+    exit 1
+fi
+
+###########################################################
+#              Start actual check
+###########################################################
 echo "Checking external dependencies ( $(color red)$(icon xmark)$(color end) Not installed. $(color green)$(icon check)$(color end) Installed.)"
 echo "$(hr)"
 
@@ -30,23 +66,24 @@ for i in "${soft[@]}"; do
   # 2 (missing arguments)
   status=$?
  
-  if (( $status > 0 ));then
-  	#At least one dependency is not satisfied 
-  	notInstalled=1
+  #At least one dependency was not found. 
+  if [[ $status == 1 ]];then
+    notInstalled=1
 	echo "$(color red)$(icon xmark)$(color end) $i."
   fi
   
-  if (( $status == 0 ));then
+  #Dependency found.
+  if [[ $status == 0 ]];then
 	echo "$(color green)$(icon check)$(color end) $i."	
   fi
 done
 
-#If at least one pre-requisite is not met. Stop installation.
-if (( $notInstalled > 0 ));then
+#If at least one pre-requisite is not met. Inform user and stop installation.
+if [[ $notInstalled == 1 ]];then
 	
   	echo "
   	Some software dependencies necessary to install BioBash were not found. 
-  	Please make sure that all programs marked with a: $(color red)$(icon xmark)$(color end) are correctly installed
+  	Please make sure that all programs marked with '$(color red)$(icon xmark)$(color end) ' are correctly installed
   	before installing BioBash.
   	"
 	exit 1

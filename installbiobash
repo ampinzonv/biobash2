@@ -3,24 +3,57 @@
 # Performs the installation of BIOBASH.
 #
 
+#Common libraries
 source lib/shml/shml.sh
+source lib/bash-utility/src/interaction.sh
+
+
+#----------------------------------------------------------------------------
+#
+#  FUNCTIONS
+#
+#----------------------------------------------------------------------------
+
+# Reads user input to define installation directory. Returns real path to dir.
+function define_install_dir() {
+    read -p "Install in (/usr/local): " dir
+
+    #If user hitted ENTER, $dir comes empty, so use default install dir.
+    #Otherwise use user provided path.
+    if [ -z "$dir" ]; then
+        dir=$default
+    else
+        dir=$dir
+    fi
+    #realpath for installDir. No relative paths allowed.
+    #There is a bug with paths like "~/path/to/dir". For some reason "realpath" do not
+    #resolve this type of path in the script, but it does in the shell!!??
+    return=$(realpath ${dir})
+    
+    #Return value
+    echo "$return"
+}
+
+
+
 
 # Some propaganda/user feedback.
 echo "
 
-$(fgcolor green 'BIOBASH INSTALLATION') $(fgcolor end)       
-$(fgcolor green 'Bioinformatics and Systems Biology Laboratory') $(fgcolor end)
-$(fgcolor green 'Institute for Genetics -  National University of Colombia') $(fgcolor end)
+$(fgcolor green '                 = BIOBASH INSTALLER =') $(fgcolor end)       
+$(fgcolor green '         Bioinformatics and Systems Biology Laboratory') $(fgcolor end)
+$(fgcolor green '   Institute for Genetics -  National University of Colombia') $(fgcolor end)
 "
 
-########
-#BEFORE ATTEMPTING ANYTHING... check pre-requisites.
-########
+#----------------------------------------------------------------------------
+#
+#  BEFORE ATTEMPTING ANYTHING... check pre-requisites.
+#
+#----------------------------------------------------------------------------
 ./check_dependencies.sh
 
-#If check dependencies was succesful it creates a "flag" file: depende_ok
+#If check dependencies was succesful it creates a "flag" file: depend_ok
 #otherwise (file doesn`t exist) there are dependencies to be met. Stop installation.
-
 if [[ ! -e depend_ok ]];then
 	
 	echo "Quitting installation of BioBash.
@@ -28,47 +61,56 @@ if [[ ! -e depend_ok ]];then
 	exit 1
 fi
 
-echo "success!!!"
-exit 0
+# If we reached this point it means dependencies check was succesful and therefore
+# it is safe to erase depend_ok file. It is not needed from now on.
+rm depend_ok
 
 
 
 
+#----------------------------------------------------------------------------
+#
+#          START ACTUAL INSTALLATION
+#
+#-----------------------------------------------------------------------------
 
 # We are assuming a standard installation on a Linux Machine (at least
 # for now). This is the default directory for installation.
 default="/usr/local"
 
 
+echo " Initiating BioBash installation."
+echo "$(hr)"
 
-echo  "Hit ENTER to use the default installation directory ($default) or provide a
-valid installation path below:"
-read -p " > " dir
+echo  "
+The installation directory is the place where all BioBash related files will be stored,
+including libraries and binaries. By default BioBash will be installed in '$default' directory,
+nevertheless you need write permissions on that folder. Alternatively you can define  a
+path to another installation directory.
+Hit ENTER to use the default installation directory ($default) or provide a
+valid installation path:
+"
 
-#If user hitted ENTER, $dir comes empty, so use default install dir.
-#Otherwise use user provided path.
-if [ -z "$dir" ]; then
+installDir="$(define_install_dir)"
+echo $installDir
 
-    dir=$default
-    
-else
-    dir=$dir
-fi
-
-#realpath for installDir. No relative paths allowed.
-#There is a bug with paths like "~/path/to/dir". For some reason "realpath" do not
-#resolve this type of path in the script, but it does in the shell!!??
-installDir=$(realpath ${dir})
+exit 0
 
 # Wether install will be performed on user defined or default install dir, it is
 # important to make sure that it exists and that we can write on it.
 # Does it exist?
 if [ ! -d "${installDir}" ];then
-	echo "$installDir does not exist. Please make sure it is a valid directory."
-	echo "BioBash was not installed. Quitting
-	
+    
+    exists=0
+	echo 
+	"$installDir does not exist. Please make sure it is a valid directory.
 	"
-	exit 1
+	
+	until [ $exists  == "y" ]
+    do
+        #keep asking for a valid directory
+	    installDir="$(define_install_dir)"
+    done
 fi
 
 # If we reached this point it means directoy exists. Check if it is writable.
