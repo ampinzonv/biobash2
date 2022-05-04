@@ -1,4 +1,9 @@
 2022-05-03
+* checkdependencies and installbiobash scripts are stable and perform the minimum necessary
+validations as to be considered "stable".
+* Create a tag with this version of BioBash.
+
+2022-05-03
 * installbiobash script was modified, so it performs basic install now. 
 
 2021-12-15

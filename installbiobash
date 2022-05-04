@@ -92,25 +92,18 @@ valid installation path:
 "
 
 installDir="$(define_install_dir)"
-echo $installDir
 
-exit 0
 
 # Wether install will be performed on user defined or default install dir, it is
 # important to make sure that it exists and that we can write on it.
 # Does it exist?
 if [ ! -d "${installDir}" ];then
     
-    exists=0
-	echo 
+ 
 	"$installDir does not exist. Please make sure it is a valid directory.
 	"
-	
-	until [ $exists  == "y" ]
-    do
-        #keep asking for a valid directory
-	    installDir="$(define_install_dir)"
-    done
+	exit 1
+
 fi
 
 # If we reached this point it means directoy exists. Check if it is writable.
@@ -121,10 +114,13 @@ if [ ! -w "$installDir" ];then
 fi
 
 
+
 #If we reached this point, it means we can proceed with installation. 
-#-----------------------------------------
-# MAIN INSTALLATION
-#-----------------------------------------
+#----------------------------------------------------------------------
+#
+#                          MAIN INSTALLATION
+#
+#-----------------------------------------------------------------------
 
 
 
