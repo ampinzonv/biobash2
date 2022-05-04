@@ -5,24 +5,21 @@
 
 # We are assuming a standard installation on a Linux Machine (at least
 # for now). This is the default directory for installation.
-default="/usr/local/bin"
+default="/usr/local"
 
 # Some propaganda/user feedback.
 echo "
 
-#
+###
             BIOBASH INSTALLATION
 Bioinformatics and Systems Biology Laboratory
             Institute for Genetics
         National University of Colombia
-#
+###
 
 
 "
-#Use this message if something goes wrong.
-failure=" == WARNING! Unable to install BIOBASH =="
 
-BBVERSION=$(cat version)
 
 echo  "Hit ENTER to use the default installation directory ($default) or provide a
 valid installation path below:"
@@ -32,68 +29,68 @@ read -p " > " dir
 #Otherwise use user provided path.
 if [ -z "$dir" ]; then
 
-    installDir=$default
+    dir=$default
     
 else
-    installDir=$dir
+    dir=$dir
+fi
+
+#realpath for installDir. No relative paths allowed.
+#There is a bug with paths like "~/path/to/dir". For some reason "realpath" do not
+#resolve this type of path in the script, but it does in the shell!!??
+installDir=$(realpath ${dir})
+
+# Wether install will be performed on user defined or default install dir, it is
+# important to make sure that it exists and that we can write on it.
+# Does it exist?
+if [ ! -d "${installDir}" ];then
+	echo "$installDir does not exist. Please make sure it is a valid directory."
+	echo "BioBash was not installed. Quitting
+	
+	"
+	exit 1
+fi
+
+# If we reached this point it means directoy exists. Check if it is writable.
+if [ ! -w "$installDir" ];then
+	echo "I can not write to: $installDir. Please make sure you have the right permissions on that folder."
+	exit 1
+
 fi
 
 
-#A BETTER SOLUTION HERE IS CHECK THAT DIRECTORY DO NOT EXIST AND THEN EXIT:
-# https://www.linuxquestions.org/questions/linux-newbie-8/check-if-directory-does-not-exist-in-bash-806969/
+#If we reached this point, it means we can proceed with installation. 
+#-----------------------------------------
+# MAIN INSTALLATION
+#-----------------------------------------
 
+#This is KEY. Everything will be referenced to this path.
+BBVERSION=$(cat version)
+BIOBASH_HOME=$(echo $installDir/$BBVERSION)
 
-#Wether install will be performed on user defined or default install dir, it is
-# important to make sure that it exists and that we can write on it.
-# Does it exist?
-if [ -d "$installDir" ];then
-    
-    # Is it writable?
-    if [ -w "$installDir" ];then
-	
-       #-----------------------------------------
-       # MAIN INSTALLATION
-       #-----------------------------------------
+#User feedback
+echo "Installing to: $BIOBASH_HOME"
 
-        BIOBASH_HOME=$(echo $installDir/$BBVERSION)
-        echo "Installing to: $BIOBASH_HOME"
-	mkdir $BIOBASH_HOME
+mkdir $BIOBASH_HOME
 
  	#Check pre-requisites
 	# gcc, zlib, wget or curl, unzip, EMBOSS.
-	./check_dependencies.sh
+	#./check_dependencies.sh
 
 	# install seqtk
-	./install_seqtk.sh
+	#./install_seqtk.sh
 
 	# This routine puts all needed variables into bashrc
+	# This script reads the $1 var.
 	./setup_environment.sh $BIOBASH_HOME
 
-	#Future version need a better selection of what to install.
-        cp -r ./lib $BIOBASH_HOME
-        cp -r ./bin $BIOBASH_HOME
-        cp -r ./tmp $BIOBASH_HOME
-        cp *.sh ./lib $BIOBASH_HOME
+	# Future version need a better selection of what to install.
+    #    cp -r ./lib $BIOBASH_HOME
+    #    cp -r ./bin $BIOBASH_HOME
+    #    cp -r ./tmp $BIOBASH_HOME
+    #    cp *.sh ./lib $BIOBASH_HOME
 
 
-        echo "Installation complete. Thank you for installing BIOBASH
-        
-        "
-    else
-
-    
-    echo $failure
-    echo " "
-    echo "$installDir is not writable.Please make sure you have write access."
-    echo "  "
-
-    fi
-    
-else
-    echo $failure
-    echo "  "
-    echo "  The directory you just typed ($installDir) does not exist."
-    echo "  Please make sure route is correct"
-    echo " "
-fi
+  echo "Installation complete. Thank you for installing BIOBASH"
+  exit 0
 

@@ -1,3 +1,6 @@
+2022-05-03
+* installbiobash script was modified, so it performs basic install now. 
+
 2021-12-15
 * Stripped template bashrc. Left only strictly neccesary variables.
 
