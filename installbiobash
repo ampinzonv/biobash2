@@ -121,35 +121,104 @@ fi
 #                          MAIN INSTALLATION
 #
 #-----------------------------------------------------------------------
-
-
-
-#This is KEY. Everything will be referenced to this path.
 BBVERSION=$(cat version)
 BIOBASH_HOME=$(echo $installDir/$BBVERSION)
 
 #User feedback
-echo "Installing to: $BIOBASH_HOME"
+echo "
+$(hr)
+"
+echo "
+Everything looks ok and I am ready to install BioBash version $BBVERSION in $BIOBASH_HOME.
+"
+
+#Flow control. Answer should be "y" or "n"
+continue=0
+until [ $continue  == "y" ] || [ $continue == "n" ]
+do
+    read -p 'Proceed? [y/n]: ' continue
+done
+
+if [[ $continue == "n" ]]; then
+    
+    echo "
+    Thank you for your interest in BioBash.
+    Nothing done. Quitting installation.
+    
+    Bye!
+    
+    "
+    exit 0
+    
+elif [[ $continue == "y" ]];then
+    echo ""
+else
+    echo "ERROR: Installation can not proceed. Unknown reason."
+    exit 1
+fi
+
 
 #Create BIOBASH directory. The "-p" option is useful when re-trying the installation multiple times,
 #so if the directory was created before it won't complain because directory already exists.
 mkdir -p $BIOBASH_HOME
 
 
-	# install seqtk
-	#./install_seqtk.sh
+#----------------------------------------------------------------------------
+#
+#                            SETUP ENVIRONMENT
+#
+# This routine puts all needed  environmental variables into bashrc
+# 
+#----------------------------------------------------------------------------
+#Note that we are sending the $BIOBASH_HOME variable to the script!!!
+./setup_environment.sh $BIOBASH_HOME
 
-	# This routine puts all needed variables into bashrc
-	# This script reads the $1 var.
-	./setup_environment.sh $BIOBASH_HOME
+#If environment setup was succesful it creates a "flag" file: environ_ok
+#otherwise (file doesn`t exist) there were errors. Stop installation.
+if [[ ! -e environ_ok ]];then
+	
+	echo "Quitting installation of BioBash.
+	"
+	exit 1
+fi
 
-	# Future version need a better selection of what to install.
-    #    cp -r ./lib $BIOBASH_HOME
-    #    cp -r ./bin $BIOBASH_HOME
-    #    cp -r ./tmp $BIOBASH_HOME
-    #    cp *.sh ./lib $BIOBASH_HOME
+# If we reached this point it means environment set up was succesful and therefore
+# it is safe to erase depend_ok file. It is not needed from now on.
+rm environ_ok
 
 
-  echo "Installation complete. Thank you for installing BIOBASH"
-  exit 0
+
+#----------------------------------------------------------------------------
+#
+#                            Copy libraries
+#
+#            This routine copies libraries and stuff in BIOBASH_HOME
+# 
+#----------------------------------------------------------------------------
+
+# Future version needs a better selection of what to install.
+cp -r ./lib $BIOBASH_HOME
+cp -r ./bin $BIOBASH_HOME
+cp bb_* $BIOBASH_HOME #These are all the actual BB scripts.
+
+
+#----------------------------------------------------------------------------
+#
+#                            Install Interfaces
+#
+#            This routine copies libraries and stuff in BIOBASH_HOME
+# 
+#----------------------------------------------------------------------------
+
+# install seqtk
+#./install_seqtk.sh
+
+echo "
+$(emoji thumbsup) [SUCCESS!]
+$(attribute bold) Installation complete. Thank you for installing BIOBASH $(attribute end)
+           Bioinformatics and Systems Biology Laboratory
+    Institute for Genetics - National University of Colombia
+                    Bogota - Colombia 2022
+"
+exit 0
 
