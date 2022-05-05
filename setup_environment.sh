@@ -112,6 +112,37 @@ else
 fi
 
 
+#------------    Check OPERAING SYSTEM   ----------
+#
+# Depending on the OS we are installing we will need to adapt
+# the routes to pre-installed binaries and other stuff
+#--------------------------------------------------------
+if [ `uname` == "Darwin" ]; then
+    OS="osx"
+elif [ `uname` == "Linux" ];then
+    OS="linux"
+else
+    echo "
+    Impossible to detect the operating system you are installing BioBash on.
+    "
+    
+    myos=0
+    until [ $myos  == "Linux" ] || [ $myos == "OSX" ]
+    do
+        read -p 'Please select between: Linux or OSX: ' continue
+    done
+    
+    if [[ $myos == "Linux" ]];then
+        OS="Linux"
+    elif [[ $myos == "OSX" ]];then
+        OS="osx"
+    else
+        echo "[ERROR] Unable to detect which Operating System we are working on. Quitting"
+        exit 1
+    fi
+    
+    
+fi
 
 
 #This $1 variable comes from installbiobash script. Basically it is the installDir path +
@@ -120,8 +151,6 @@ BIOBASH_HOME=$1
 
 BIOBASH_LIB="$BIOBASH_HOME/lib"
 BIOBASH_BIN="$BIOBASH_HOME/bin"
-BIOBASH_BIN_LINUX="$BIOBASH_BIN/linux"
-BIOBASH_BIN_OSX="$BIOBASH_BIN/osx"
 
 
 SHML_LIB="$BIOBASH_LIB/shml/shml.sh" 
@@ -129,6 +158,13 @@ BASHUTILITY_LIB_PATH="$BIOBASH_LIB/bash-utility"
 BASHUTILITY_LIB="$BASHUTILITY_LIB_PATH/bash_utility.sh"
 BB_NATIVE_LIB_PATH="$BIOBASH_LIB/bb_native"
 BB_NATIVE_LIB="$BB_NATIVE_LIB_PATH/bb_native.sh"
+
+if [[ $OS == "Linux" ]];then
+    BIOBASH_BIN_OS="$BIOBASH_BIN/linux"
+fi
+if [[ $OS == "Darwin" ]];then
+    BIOBASH_BIN_OS="$BIOBASH_BIN/osx"
+fi
 
 
 
@@ -145,8 +181,7 @@ echo "
 BIOBASH_HOME="$BIOBASH_HOME"
 BIOBASH_LIB="$BIOBASH_LIB" 
 BIOBASH_BIN="$BIOBASH_BIN"
-BIOBASH_BIN_LINUX="$BIOBASH_BIN_LINUX"
-BIOBASH_BIN_OSX="$BIOBASH_BIN_OSX"
+BIOBASH_BIN_OS="$BIOBASH_BIN_OS"
 
 SHML_LIB="$SHML_LIB"
 BASHUTILITY_LIB_PATH="$BASHUTILITY_LIB_PATH"
@@ -158,8 +193,7 @@ BB_NATIVE_LIB="$BB_NATIVE_LIB"
 export BIOBASH_HOME
 export BIOBASH_LIB
 export BIOBASH_BIN
-export BIOBASH_BIN_LINUX
-export BIOBASH_BIN_OSX
+export BIOBASH_BIN_OS
 export SHML_LIB
 export BASHUTILITY_LIB_PATH
 export BASHUTILITY_LIB
