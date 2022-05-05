@@ -7,12 +7,12 @@ Official repository for the BioBash project development.
 This project is aimed to develope a Bioinformatics library for common tasks in the field of Computational Biology (mainly Bioinformatics) using the BASH language.
 It is leaded by Andrés M. Pinzón, full time professor at Bioinformatics and Systems Biology Laboratory[Bioinformatics and Systems Biology Laboratory](https://gibbslab.github.io/) , Institute for Genetics[Institute for Genetics](https://genetica.unal.edu.co/)  - National University of Colombia[National University of Colombia](http://unal.edu.co/)  in south America. 
 
-##Why BioBash?
+## Why BioBash?
 Basically this library has been around for several years in our laboratory, as a bunch of routines I programmed for common bioinformatics tasks such as dealing with FASTA headers and FQ files, as well as with manipulation of lists of genes etc.
 After the years of using this BioBash two things became clear. **First** it was really useful and **second**, I found myself re-inventing the wheel  (in BASH!).
 So, since there are hundreds of useful and optimized bioinformatics tools, why create something like BioBash? Well there are two answers. **First**, not everything has been already done in Bioinformatics, and there is room for a couple of things. **Second**, I found myself , students and  colleagues adapting to the way different tools manipulate files, inputs and outputs, so there was a learning curve in every single tool.
 
-###A matter of consistency and efficiency
+### A matter of consistency and efficiency
 So one of the main aims of BioBash is to have a consistent interface for common analysis in the field, without re-inventing the wheel and in a common ambient for Computational Biologists (e.i. BASH). 
 In this regard, on one hand BioBash is a wrapper for several pre-existent bioinformatics tools, such as clustalw, seqtk, BWA, Bowtie, EMBOSS, NCBI-BLAST etc, with a consistent interface for all of them. On the other hand it also provides brand new routines for file manipulation and other Bioinformatics-related tasks common in the field (dealing with lists anyone?), and for that regard uses core utils that come with any installation of BASH.
 
