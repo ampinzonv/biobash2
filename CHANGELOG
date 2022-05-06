@@ -1,3 +1,7 @@
+2022-06-03
+*Added unistallation script
+*Fixed BIOBASH_BIN_OS issue that was not getting the path to OS specific binaries.
+
 2022-05-03
 * checkdependencies and installbiobash scripts are stable and perform the minimum necessary
 validations as to be considered "stable".
