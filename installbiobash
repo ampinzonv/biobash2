@@ -122,7 +122,7 @@ fi
 #
 #-----------------------------------------------------------------------
 BBVERSION=$(cat version)
-BIOBASH_HOME=$(echo $installDir/$BBVERSION)
+BIOBASH_HOME=$(echo "$installDir/biobash-$BBVERSION")
 
 #User feedback
 echo "
@@ -210,12 +210,18 @@ cp bb_* $BIOBASH_HOME #These are all the actual BB scripts.
 # 
 #----------------------------------------------------------------------------
 
-# install seqtk
-#./install_seqtk.sh
 
 echo "
-$(emoji thumbsup) [SUCCESS!]
-$(attribute bold) Installation complete. Thank you for installing BIOBASH $(attribute end)
+$(emoji thumbsup) [BIOBASH WAS INSTALLED SUCCESFULLY!]
+
+$(attribute bold) Before using BioBash$(attribute end) please update your environment with the following command:
+
+   > source ~/.bashrc
+   
+   Alternatively you can open a new terminal or logout and login from your account.
+   
+   $(attribute bold)Thank you for installing BIOBASH $(attribute end)
+   
            Bioinformatics and Systems Biology Laboratory
     Institute for Genetics - National University of Colombia
                     Bogota - Colombia 2022

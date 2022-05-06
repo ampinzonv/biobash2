@@ -119,21 +119,24 @@ fi
 #--------------------------------------------------------
 if [ `uname` == "Darwin" ]; then
     OS="osx"
+    echo "OSX Darwin detected."
 elif [ `uname` == "Linux" ];then
     OS="linux"
+    echo "Linux OS detected."
 else
     echo "
     Impossible to detect the operating system you are installing BioBash on.
     "
     
     myos=0
+    
     until [ $myos  == "Linux" ] || [ $myos == "OSX" ]
     do
         read -p 'Please select between: Linux or OSX: ' continue
     done
-    
+    #BE CAREFUL here with Linux (capital L) and linux.
     if [[ $myos == "Linux" ]];then
-        OS="Linux"
+        OS="linux"
     elif [[ $myos == "OSX" ]];then
         OS="osx"
     else
@@ -141,9 +144,7 @@ else
         exit 1
     fi
     
-    
 fi
-
 
 #This $1 variable comes from installbiobash script. Basically it is the installDir path +
 # biobash version, converted into a directory.
@@ -159,7 +160,7 @@ BASHUTILITY_LIB="$BASHUTILITY_LIB_PATH/bash_utility.sh"
 BB_NATIVE_LIB_PATH="$BIOBASH_LIB/bb_native"
 BB_NATIVE_LIB="$BB_NATIVE_LIB_PATH/bb_native.sh"
 
-if [[ $OS == "Linux" ]];then
+if [[ $OS == "linux" ]];then
     BIOBASH_BIN_OS="$BIOBASH_BIN/linux"
 fi
 if [[ $OS == "Darwin" ]];then
