@@ -44,8 +44,8 @@ if [[ ! -e "${HOME}/.bashrc" ]];then
     
 	elif [[ $continue == "y" ]];then
 		echo "Creating a brand new .bashrc file just for you!"
-		touch ${HOME}/.bashrc 
-		echo "#This file was automatically created by BioBash" >> ${HOME}/.bashrc
+		touch "${HOME}"/.bashrc 
+		echo "#This file was automatically created by BioBash" >> "${HOME}"/.bashrc
 	else
 	    echo "ERROR: Installation can not proceed. Unknown reason."
 	    exit 1
@@ -63,8 +63,8 @@ fi
 # That is way here we check that the current .bashrc file is not holding at least the 
 # BIOBASH_HOME variable which is key the root of all other variables.
 
-mod=$(grep -c "BIOBASH_HOME" ${HOME}/.bashrc)
-if [[ $mod > 0 ]];then
+mod=$(grep -c "BIOBASH_HOME" "${HOME}"/.bashrc)
+if [[ $mod -gt 0 ]];then
 	echo " 
 	$(emoji x) [ERROR]: The BIOBASH_HOME variable is present in your .bashrc file.
 	This can be due to a previous BioBash installation. Since appending a new set of variables
@@ -104,7 +104,7 @@ if [[ $continue == "n" ]]; then
     
 elif [[ $continue == "y" ]];then
 	echo "Creating back up."
-	cp $HOME/.bashrc $HOME/.bashrc_BB.backup.${rightNow}
+	cp "$HOME"/.bashrc "$HOME"/.bashrc_BB.backup."${rightNow}"
 	echo "Done."
 else
 	 echo "ERROR: Installation can not proceed. Unknown reason."
@@ -117,10 +117,10 @@ fi
 # Depending on the OS we are installing we will need to adapt
 # the routes to pre-installed binaries and other stuff
 #--------------------------------------------------------
-if [ `uname` == "Darwin" ]; then
+if [ "$(uname)" == "Darwin" ]; then
     OS="osx"
     echo "OSX Darwin detected."
-elif [ `uname` == "Linux" ];then
+elif [ "$(uname)" == "Linux" ];then
     OS="linux"
     echo "Linux OS detected."
 else
@@ -163,7 +163,7 @@ BB_NATIVE_LIB="$BB_NATIVE_LIB_PATH/bb_native.sh"
 if [[ $OS == "linux" ]];then
     BIOBASH_BIN_OS="$BIOBASH_BIN/linux"
 fi
-if [[ $OS == "Darwin" ]];then
+if [[ $OS == "osx" ]];then
     BIOBASH_BIN_OS="$BIOBASH_BIN/osx"
 fi
 
@@ -205,10 +205,10 @@ export BB_NATIVE_LIB
 export PATH="$BIOBASH_HOME:$BIOBASH_BIN_LINUX:$BIOBASH_BIN_OSX:$PATH"
 
 
-" >> $HOME/.bashrc
+" >> "$HOME"/.bashrc
 
 #Make all variables accesible to this shell.
-source $HOME/.bashrc
+source "$HOME"/.bashrc
 
 #Create a flag to continue installation
 touch environ_ok

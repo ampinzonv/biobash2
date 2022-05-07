@@ -28,7 +28,7 @@ function define_install_dir() {
     #realpath for installDir. No relative paths allowed.
     #There is a bug with paths like "~/path/to/dir". For some reason "realpath" do not
     #resolve this type of path in the script, but it does in the shell!!??
-    return=$(realpath ${dir})
+    return=$(realpath "${dir}")
     
     #Return value
     echo "$return"
@@ -100,7 +100,7 @@ installDir="$(define_install_dir)"
 if [ ! -d "${installDir}" ];then
     
  
-	"$installDir does not exist. Please make sure it is a valid directory.
+	echo "$installDir does not exist. Please make sure it is a valid directory.
 	"
 	exit 1
 
@@ -160,7 +160,7 @@ fi
 
 #Create BIOBASH directory. The "-p" option is useful when re-trying the installation multiple times,
 #so if the directory was created before it won't complain because directory already exists.
-mkdir -p $BIOBASH_HOME
+mkdir -p "$BIOBASH_HOME"
 
 
 #----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ mkdir -p $BIOBASH_HOME
 # 
 #----------------------------------------------------------------------------
 #Note that we are sending the $BIOBASH_HOME variable to the script!!!
-./setup_environment.sh $BIOBASH_HOME
+./setup_environment.sh "$BIOBASH_HOME"
 
 #If environment setup was succesful it creates a "flag" file: environ_ok
 #otherwise (file doesn`t exist) there were errors. Stop installation.
@@ -197,9 +197,9 @@ rm environ_ok
 #----------------------------------------------------------------------------
 
 # Future version needs a better selection of what to install.
-cp -r ./lib $BIOBASH_HOME
-cp -r ./bin $BIOBASH_HOME
-cp bb_* $BIOBASH_HOME #These are all the actual BB scripts.
+cp -r ./lib "$BIOBASH_HOME"
+cp -r ./bin "$BIOBASH_HOME"
+cp bb_* "$BIOBASH_HOME" #These are all the actual BB scripts.
 
 
 #----------------------------------------------------------------------------

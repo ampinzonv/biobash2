@@ -1,3 +1,4 @@
+#!/bin/bash
 #bb_get_fasta_headers 
 
 
@@ -7,5 +8,5 @@
 		Usage: bb_get_fasta_headers [INPUT FILE]
 		"
 	fi
-	grep '>' $1  | sed -e 's/>//'
+	grep '>' "$1"  | sed -e 's/>//'
 	
