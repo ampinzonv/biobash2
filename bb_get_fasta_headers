@@ -1,12 +1,51 @@
 #!/bin/bash
-#bb_get_fasta_headers 
+# @file bb_get_fasta_headers 
+# @brief Extracts headers from a single/multiple fasta file.
+# @description 
+#	Outputs a list of all fasta headers without the ">"in a fasta file.
+#	It can be a single or multiple fasta file.
+# @example 
+#	bb_get_fasta_headers -i sequence.fasta 
+# @arg $1 A valid fasta file.
+# @exitcode 0 if succesful
+# @exitcode 1 if unsuccesful
+#
+# Since sometimes remembering how exactly getopts work, this can be handy:
+# https://www.tutorialspoint.com/unix_commands/getopt.htm
+# getopt returns error code 0 for succesful parsing, 1 if getopt(3) returns errors, 
+# 2 if it does not understand its own parameters, 3 if an internal error occurs like out-of-memory, 
+# and 4 if it is called with -T.
+while getopts i:o:: option; do
+	case "${option}" in
+		i)
+			fastaFile="$OPTARG";;
+		o)
+			output="$OPTARG";;
+		\?)
+			echo "[ERROR]"
+			exit;;
+	esac
+done	
 
+#--------------------------------------------------------------------------
+#						Validate Input
+# It is necessary to evaluate several input cases.
+# Case 1: nor -i OR $1 is provided
+# Case 2: $1  AND -i are provided (i.e. bb_script file.fasta -i whatever)
+# Case 3: -i is provided but it is empty (3.1).
+#	3.1 bb_script -i  (Handled by getopts)
+#	3.2 bb_script -i -o outdir. (Not Handled by getopts and NOT handled here!!)
+# The latter case is a bug? Needs re-thinking.
+#--------------------------------------------------------------------------
 
-	if [ -z "$1" ] ; then
-		echo "
-		bb_get_fasta_headers: ouputs a list of all fasta headers in a file.
-		Usage: bb_get_fasta_headers [INPUT FILE]
-		"
-	fi
-	grep '>' "$1"  | sed -e 's/>//'
-	
+if  [[ -z "$fastaFile" ]] || [[ "$fastaFile" == "-o" ]]; then
+	echo "No Fasta file provided."
+	exit 1
+else
+	echo "Input: $fastaFile"
+	exit 0
+fi
+
+exit 
+grep '^>' "$1"  | sed -e 's/>//'
+exit 0	

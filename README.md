@@ -43,7 +43,7 @@ The standards followed by BB are the [Shell Style Guide](https://google.github.i
 Code documentation is automatically generated with another amazing library called [shdoc](https://github.com/reconquest/shdoc).
 
 ### Side note
-In case this can be interesting to anyone, this project has been developed both under OSX and Linux machines (depending if I am at home or at work) using VSCode as code editor, supported by the Bash IDE, Bats, indent-rainbow, shell-format and ShellCheck extensions for VSCode. Nice.
+In case this can be interesting to anyone, this project has been developed both under OSX and Linux machines (depending if I am at home or at work) using VSCode as code editor, supported by the Bash IDE, Bats, indent-rainbow, shell-format and ShellCheck extensions for VSCode. Nice ones!.
 
 
 
