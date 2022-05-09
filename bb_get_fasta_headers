@@ -42,22 +42,25 @@ done
 #	This can be considered a feature. ALL BB scripts REQUIRE "-i"
 # Case 3: -i is provided but it is empty (3.1).
 #	3.1 bb_script -i  (Handled by getopts)
-# Case 4: -i is provided but empty, followed by -o. So -i thinks "-o" is the input.
 #--------------------------------------------------------------------------
-
-#Cases 1 and 4
-if  [[ -z "$fastaFile" ]] || [[ "$fastaFile" == "-o" ]]; then
+if  [[ -z "$fastaFile" ]]; then
 	feedback::sayfrom "No fasta file provided" "error"
+	echo "
+	Usage:
+	bb_get_fasta_headers -i [fasta file]
+	"
 	exit 1
 fi
 
-#If user wants to save to a file
-if [[ ! -z "$output" ]];then
-	addToCommand=" > $output"
+isFasta=$(validate::isFasta $fastaFile) 
+
+if [[ $isFasta == "true" ]];then
+
+	grep "^>" "$fastaFile"  | sed -e "s/>//"
+	
 else
-	addToCommand=""
+	feedback::sayfrom "Provided $fastaFile file, is not a valid Fasta file." "error"
+	exit 
 fi
 
-#TODO: create function create_file to save everything with "-o"
-grep '^>' "$fastaFile"  | sed -e 's/>//'
 exit 0	

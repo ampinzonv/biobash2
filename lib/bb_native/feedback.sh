@@ -3,7 +3,6 @@ source $BIOBASH_HOME/lib/shml/shml.sh
 
 # @file Feedback
 # @brief Functions to handle user feedback and message prompting
-
 # @description Displays a message and file name from where message is generated.
 #
 # @example
@@ -63,3 +62,4 @@ fi
 echo $(fgcolor $color "$1") $(fgcolor end)
 
 }
+
