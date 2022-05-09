@@ -1,3 +1,5 @@
+2022-09-03
+* Environment vars starting with "BB_" where renamed to "BIOBASH_"
 2022-08-03
 * New BIOBASH_OS variable added in setup_environment. Replaces BIOBASH_OS_osx/linux vars.
 * bb_get_fasta_headers is used as started ponit to create a "model" script forfuther dev. 
