@@ -19,19 +19,40 @@
 
 
 source $BIOBASH_NATIVE_LIB
+source $BASHUTILITY_LIB_PATH/src/string.sh
 
-#ALL BB scripts that receive input REQUIRE THE FLAG:"-i"
-while getopts i:o:: option; do
-	case "${option}" in
-		i)
-			fastaFile="$OPTARG";;
-		o)
-			output="$OPTARG";;
-		\?)
-			feedback::sayfrom "Unknown option." "error"
-			exit;;
-	esac
-done	
+stream=$(cat)
+if [[ -z "$stream" ]]; then
+	echo "EMPTY"
+else
+	echo $stream
+fi
+
+exit 
+#stream=$(cat)
+#echo "$(string::to_lower $stream)"
+
+# If nothing comes from stream (STDOUT) then check for -i option.
+if [[ -z "$stream" ]]; then
+echo "Stream empty"
+	while getopts i: option; do
+		case "${option}" in
+			i)
+				fastaFile="$OPTARG";;
+			\?)
+				feedback::sayfrom "Unknown option." "error"
+				exit;;
+		esac
+	done
+else
+#stream is not empty
+echo "Stream not empty"
+	fastaFile="$(echo "$stream")"
+fi
+
+echo "$fastaFile"
+echo $stream
+exit
 
 #--------------------------------------------------------------------------
 #						Validate Input
@@ -57,7 +78,7 @@ isFasta=$(validate::isFasta $fastaFile)
 if [[ $isFasta == "true" ]];then
 
 	grep "^>" "$fastaFile"  | sed -e "s/>//"
-	
+
 else
 	feedback::sayfrom "Provided $fastaFile file, is not a valid Fasta file." "error"
 	exit 

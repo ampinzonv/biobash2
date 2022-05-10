@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# This is a library for comon validation of files, directories etc.
+#
+#
 
 validate::isFasta()
 {
@@ -34,4 +38,14 @@ validate::isFastq()
     #tomar la primera linea
 
     # ver si comienza con un "@"
+}
+
+validate::itExists()
+{
+    echo ""
+}
+
+validate::isWritable()
+{
+    echo ""
 }
