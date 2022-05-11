@@ -49,3 +49,12 @@ validate::isWritable()
 {
     echo ""
 }
+
+
+#validates input, wether it comes from STDIN, $1 or by a parameter such as "-i"
+validate::getInput()
+{
+
+    echo ""
+
+}

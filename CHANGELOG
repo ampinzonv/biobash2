@@ -1,3 +1,7 @@
+2022-10-03
+* Functional routine to read from STDIN added to bb_get_fasta_headers.
+* Theres still a bug, since calling script without arguments makes it wait forever because of "cat".
+
 2022-09-03
 * Environment vars starting with "BB_" where renamed to "BIOBASH_"
 * Added biobashrc_osx. This is a file to source only for development.

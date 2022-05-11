@@ -21,20 +21,17 @@
 source $BIOBASH_NATIVE_LIB
 source $BASHUTILITY_LIB_PATH/src/string.sh
 
-stream=$(cat)
-if [[ -z "$stream" ]]; then
-	echo "EMPTY"
-else
-	echo $stream
+#Check if streams comes not empty
+if [[ $# -eq 0 ]]; then
+	stream=$(cat <&0)
+	if [[ -n "$stream" ]]; then
+		echo "$stream" | cat > FILE
+		fastaFile="FILE"
+	fi
 fi
 
-exit 
-#stream=$(cat)
-#echo "$(string::to_lower $stream)"
-
-# If nothing comes from stream (STDOUT) then check for -i option.
-if [[ -z "$stream" ]]; then
-echo "Stream empty"
+# If nothing comes from stream (STDIN above) then check for -i option.
+if [[ -z "$data" ]]; then
 	while getopts i: option; do
 		case "${option}" in
 			i)
@@ -44,15 +41,7 @@ echo "Stream empty"
 				exit;;
 		esac
 	done
-else
-#stream is not empty
-echo "Stream not empty"
-	fastaFile="$(echo "$stream")"
 fi
-
-echo "$fastaFile"
-echo $stream
-exit
 
 #--------------------------------------------------------------------------
 #						Validate Input
