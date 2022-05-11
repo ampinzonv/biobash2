@@ -45,6 +45,12 @@ Code documentation is automatically generated with another amazing library calle
 ### Side note
 In case this can be interesting to anyone, this project has been developed both under OSX and Linux machines (depending if I am at home or at work) using VSCode as code editor, supported by the Bash IDE, Bats, indent-rainbow, shell-format and ShellCheck extensions for VSCode. Nice ones!.
 
+## Cool stuff helped BioBash development
+Several sources were used while developing BioBash (apart from the Third Party libraries above). Some of these are:
+
+* [Pure Bash Bible](https://github.com/dylanaraps/pure-bash-bible).
+* [Bioinformatics Oneliners](https://github.com/stephenturner/oneliners).
+
 
 
 
