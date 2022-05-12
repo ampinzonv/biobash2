@@ -19,7 +19,6 @@
 
 
 source $BIOBASH_NATIVE_LIB
-source $BASHUTILITY_LIB_PATH/src/string.sh
 
 #Check if streams comes not empty
 if [[ $# -eq 0 ]]; then

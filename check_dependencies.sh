@@ -7,7 +7,7 @@
 #
 
 #Source libraries necessary to run check process and other stuff.
-source lib/bash-utility/src/check.sh
+source lib/bb_native/check.sh
 source lib/shml/shml.sh
 
 soft=('gcc' 'zcat' 'wget' 'unzip' 'gnuplot' 'xargs')
