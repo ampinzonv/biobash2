@@ -5,7 +5,7 @@
 
 #Common libraries
 source lib/shml/shml.sh
-source lib/bash-utility/src/interaction.sh
+source lib/bb_native/check.sh
 
 
 #----------------------------------------------------------------------------

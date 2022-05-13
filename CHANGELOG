@@ -1,4 +1,14 @@
 2022-10-03
+* bb_native is now the only library used in BB. bash-utility and bb_native  were merged.
+* new function file::is_fasta added to  bb_native/file.sh.
+* new function file::is_multiple_fasta added to  bb_native/file.sh.
+* new function file::is_fastq added to  bb_native/file.sh.
+* New test data for above functions was added.
+* No functional function file::is_vcf added.
+* No functional functions file::is_vcf, file::is_bed, file::is_fast5 were added.
+* Most functions were standarized to utput 0, 1 or 2.
+
+2022-10-03
 * Functional routine to read from STDIN added to bb_get_fasta_headers.
 * Theres still a bug, since calling script without arguments makes it wait forever because of "cat".
 
