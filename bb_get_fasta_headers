@@ -18,7 +18,7 @@
 
 
 
-source $BIOBASH_NATIVE_LIB
+source $BIOBASH_NATIVE_LIB_PATH/file.sh
 
 #Check if streams comes not empty
 if [[ $# -eq 0 ]]; then
@@ -61,15 +61,15 @@ if  [[ -z "$fastaFile" ]]; then
 	exit 1
 fi
 
-isFasta=$(validate::isFasta $fastaFile) 
+isFasta=$(file::is_fasta $fastaFile) 
 
-if [[ $isFasta == "true" ]];then
+if [[ $isFasta == "0" ]];then
 
 	grep "^>" "$fastaFile"  | sed -e "s/>//"
 
 else
 	feedback::sayfrom "Provided $fastaFile file, is not a valid Fasta file." "error"
-	exit 
+	exit 1
 fi
 
 exit 0	

@@ -220,3 +220,119 @@ file::contains_text() {
     declare -r text="$2"
     grep -q "$text" "$file"
 }
+
+
+# @description Chek if a file or directory exists.
+#
+# @example
+#   file::file_exists "./file.sh" 
+#   #Output
+#   0
+#
+# @arg $1 string relative or absolute path to file/directory.
+#
+# @exitcode 0  If file exists.
+# @exitcode 1  If file doe not exist.
+# @exitcode 2 If missing arguments.
+file::file_exists() {
+
+    if [[ -z "$1" ]];then
+        return=2 #Missing argument
+    fi
+
+    local -r file="$1"
+    if [[ -e "$file" ]];then
+        return=0
+    else
+        return=1
+    fi
+    
+    echo "$return"
+    exit 0
+}
+
+
+# @description Checks if a file is valid fasta file. 
+# @example
+#   file::file_is_fasta "./file.fa[,fasta]" 
+#   #Output
+#   0, 1 or 2.
+#
+# @arg $1 path to a file.
+#
+# @exitcode 0  
+# @exitcode 1  
+# @exitcode 2 
+file::is_fasta()
+{
+    declare fastaFile=$1
+    if [ "$(grep -c "^>" $fastaFile)" -ge 1 ]; then
+       return=0
+    else
+        return=1
+    fi
+
+    #return
+    echo "$return"    
+    exit 0
+
+}
+
+
+
+# @description Checks if a file is a valid multiple fasta.
+# @example
+#   file::file_is_multiple_fasta "./file.fa[,fasta]" 
+#   #Output
+#   0
+#
+# @arg 
+#
+# @exitcode 0  
+# @exitcode 1  
+# @exitcode 2 
+file::is_multiple_fasta()
+{
+    declare fastaFile=$1
+
+    if [ "$(grep -c "^>" $fastaFile)" -ge 2 ]; then
+        return=0
+    else
+        return=1
+    fi
+
+    #return
+    echo "$return"
+    exit
+}
+
+
+# @description Checks if a file is valid fastq file.
+# @example
+#   file::is_fastq "./file.fq" 
+#   #Output
+#   0
+#
+# @arg $1 path to fastq file.
+#
+# @exitcode 0  
+# @exitcode 1  
+# @exitcode 2 
+file::is_fastq()
+{
+    #tomar la primera linea
+    declare fastqFile=$1
+    firstLine=$(head -n 1 $fastqFile)
+
+    # ver si comienza con un "@"
+    if [ "$(echo "$firstLine" | grep -c "^@")" -ge 1 ]; then
+        return=0
+    elif [ "$(echo "$firstLine" | grep -c "^@")" -lt 1 ]; then
+        return=1
+    else
+        return=2
+    fi
+
+    echo "$return"
+    exit
+}

@@ -7,10 +7,11 @@
 #
 
 #Source libraries necessary to run check process and other stuff.
+#Note that libraries paths here are hardcoded, since we still do not have environmental
+#variables set yet.
 source lib/bb_native/check.sh
 source lib/shml/shml.sh
 
-soft=('gcc' 'zcat' 'wget' 'unzip' 'gnuplot' 'xargs')
 
 echo "
 Before running BioBash installation I must check that some software dependencies are met.
@@ -19,6 +20,7 @@ is missing this installation will be stopped.
 This is a safe procedure that  WILL NOT compromise any of your files, installed programs or your system integrity. 
 
 "
+soft=('zcat' 'wget' 'unzip' 'gzip' 'gnuplot' 'xargs')
 
 #Flow control. Answer should be "y" or "n"
 continue=0
