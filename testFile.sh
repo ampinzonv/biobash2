@@ -14,12 +14,8 @@ echo "[Is fasta?]:  $fasta"
 #is Multiple fasta?
 echo "[Is multi-fasta?]: " $(file::is_multiple_fasta $1)
 
-
 #is fastq?
 echo "[Is fastq?]: " $(file::is_fastq $1)
-
-
-
 
 #is fast5?
 
