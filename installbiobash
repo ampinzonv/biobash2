@@ -6,6 +6,7 @@
 #Common libraries
 source lib/shml/shml.sh
 source lib/bb_native/check.sh
+source lib/bb_native/file.sh
 
 
 #----------------------------------------------------------------------------
@@ -28,7 +29,8 @@ function define_install_dir() {
     #realpath for installDir. No relative paths allowed.
     #There is a bug with paths like "~/path/to/dir". For some reason "realpath" do not
     #resolve this type of path in the script, but it does in the shell!!??
-    return=$(realpath "${dir}")
+    #return=$(realpath "${dir}")
+    return=$(file::full_path "${dir}")
     
     #Return value
     echo "$return"

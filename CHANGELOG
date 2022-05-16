@@ -1,4 +1,7 @@
-2022-10-03
+2022-05-15
+* "realpath" changed for file::full_path.
+
+2022-05-13
 * bb_native is now the only library used in BB. bash-utility and bb_native  were merged.
 * new function file::is_fasta added to  bb_native/file.sh.
 * new function file::is_multiple_fasta added to  bb_native/file.sh.
@@ -8,27 +11,27 @@
 * No functional functions file::is_vcf, file::is_bed, file::is_fast5 were added.
 * Most functions were standarized to utput 0, 1 or 2.
 
-2022-10-03
+2022-05-10
 * Functional routine to read from STDIN added to bb_get_fasta_headers.
 * Theres still a bug, since calling script without arguments makes it wait forever because of "cat".
 
-2022-09-03
+2022-05-09
 * Environment vars starting with "BB_" where renamed to "BIOBASH_"
 * Added biobashrc_osx. This is a file to source only for development.
 * New bb_native functions to validate fasta (isFasta) and multiple fasta files (isMultipleFasta).
 
-2022-08-03
+2022-05-08
 * New BIOBASH_OS variable added in setup_environment. Replaces BIOBASH_OS_osx/linux vars.
 * bb_get_fasta_headers is used as started ponit to create a "model" script forfuther dev. 
 
-2022-06-03
+2022-05-06
 * Added unistallation script
 * Fixed BIOBASH_BIN_OS issue that was not getting the path to OS specific binaries.
 
 2022-05-03
 * checkdependencies and installbiobash scripts are stable and perform the minimum necessary
 validations as to be considered "stable".
-* Create a tag with this version of BioBash.
+* Created a tag with this version of BioBash.
 
 2022-05-03
 * installbiobash script was modified, so it performs basic install now. 
