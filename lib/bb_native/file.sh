@@ -24,6 +24,26 @@ file::make_temp_file() {
     printf "%s" "${temp_file}"
 }
 
+# @description Creates a tmp file from data stream.
+# Function creates temporary file with random name from data stream. 
+#
+# @example
+#   echo "$(file::make_file_from_stream)"
+#   #Output
+#   tmp.vgftzy
+#
+# @noargs
+#
+# @exitcode 0  If successful.
+# @exitcode 1 If failed to create temp file.
+#
+# @stdout file name of temporary file created.
+
+
+
+
+
+
 # @description Create temporary directory.
 # Function creates temporary directory with random name. The temporary directory will be deleted when script finishes.
 #

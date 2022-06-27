@@ -19,33 +19,51 @@
 
 
 source $BIOBASH_NATIVE_LIB_PATH/file.sh
+source $BIOBASH_NATIVE_LIB_PATH/check.sh
+source $BIOBASH_NATIVE_LIB_PATH/feedback.sh
 
-#If there are no arguments
-if [[ $# -eq 0 ]]; then
-	stream=$(cat <&0)
+help="
+	Usage:
+	bb_get_fasta_headers -i [fasta file]
+	"
 
-	if [[ -n "$stream" ]]; then
-		#we need a file rather tha a "stream" of data to work with.
-		fastaFile=$(file::make_temp_file)
-		echo "$stream" | cat > $fastaFile
-	fi
-fi
-
-#"$stream" data is not longer needed... Command: "unset $stream" was not working. Why?!!!!
-stream=""
-
-# If nothing comes from stream (STDIN above). It is no fastaFile has been set, then check for -i option.
-if [[ -z "$fastaFile" ]]; then
+# Thanks to @barmar in Stackoverflow. 
+# Here we coud check both that $@ AND STDIN are empty. But in principle we do not need to
+# check for $# since we are not expecting positional parameters in BIOBASH and
+# we will check it with OPTARGS.  So something like:
+#            if [[ $# -eq 0  && -t 0 ]]; then
+# would be useless and buggy.
+# Let's check just for STDIN
+if [[ -t 0 ]]; then
+    feedback::say "No data stream was provided" "error"
+	
+else
+	# If we reached this point it means that data should come as a file.
+	#The best way to check if is a file is checking for the "-i" option.
 	while getopts i: option; do
 		case "${option}" in
 			i)
 				fastaFile="$OPTARG";;
+					
 			\?)
 				feedback::sayfrom "Unknown option." "error"
 				exit;;
 		esac
 	done
 fi
+echo "$fastaFile"
+exit
+
+# If we reached this point it means that "-i" is valid
+
+data=$(cat -- "$@")
+#is file?
+file::file_exists $data
+
+echo "$data"
+
+
+exit
 
 #--------------------------------------------------------------------------
 #						Validate Input
