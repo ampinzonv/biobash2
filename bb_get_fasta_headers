@@ -17,65 +17,70 @@
 # and 4 if it is called with -T.
 
 
-
-source $BIOBASH_NATIVE_LIB_PATH/file.sh
-source $BIOBASH_NATIVE_LIB_PATH/check.sh
-source $BIOBASH_NATIVE_LIB_PATH/feedback.sh
+# Source the whole BB native library.
+source $BIOBASH_NATIVE_LIB_PATH/bb_native.sh
 
 help="
-	Usage:
-	bb_get_fasta_headers -i [fasta file]
+	== BioBash get_fasta headers == 
+
+	usage: bb_get_fasta_headers -i [fasta file]
 	"
-
-# Thanks to @barmar in Stackoverflow. 
-# Here we coud check both that $@ AND STDIN are empty. But in principle we do not need to
-# check for $# since we are not expecting positional parameters in BIOBASH and
-# we will check it with OPTARGS.  So something like:
-#            if [[ $# -eq 0  && -t 0 ]]; then
-# would be useless and buggy.
-# Let's check just for STDIN
-if [[ -t 0 ]]; then
-    feedback::say "No data stream was provided" "error"
-	
-else
-	# If we reached this point it means that data should come as a file.
-	#The best way to check if is a file is checking for the "-i" option.
-	while getopts i: option; do
-		case "${option}" in
-			i)
-				fastaFile="$OPTARG";;
-					
-			\?)
-				feedback::sayfrom "Unknown option." "error"
-				exit;;
-		esac
-	done
-fi
-echo "$fastaFile"
-exit
-
-# If we reached this point it means that "-i" is valid
-
-data=$(cat -- "$@")
-#is file?
-file::file_exists $data
-
-echo "$data"
-
-
-exit
 
 #--------------------------------------------------------------------------
 #						Validate Input
 #--------------------------------------------------------------------------
-if  [[ -z "$fastaFile" ]]; then
-	feedback::sayfrom "No fasta file provided" "error"
-	echo "
-	Usage:
-	bb_get_fasta_headers -i [fasta file]
-	"
+# Thanks to @barmar in Stackoverflow. 
+# All explanation for this section can be found here:
+# https://github.com/ampinzonv/biobash2/wiki/Blog::File-Descriptors
+# https://github.com/ampinzonv/biobash2/wiki/Blog::BB-input-behavior
+
+#IS_INPUT_COMING
+if [[ $# -eq 0 && -t 0 ]]; then
+    feedback::say "No data stream nor input file provided" "error"
+	echo "$help"
 	exit 1
 fi
+
+
+# If we reached this point it means that data comes wether as positional parameter
+# or as data stream via pipe. First check for parameters.
+while getopts i: option; do
+	case "${option}" in
+		i)
+			fastaFile="$OPTARG";;
+					
+		\?)
+			feedback::sayfrom "Unknown parameter option." "error"
+			echo "${help}"
+			exit;;
+	esac
+done
+
+
+#Code above checks if -i is set, if set checks that is not empty. Also checks if
+# any non valid parameter has also been set. If any of those fail script stops.
+# So the only extra thing to check is if file exists (0:true 1:false). 
+# If file does not exists quit. If you provide an "-i" it requires a file.
+fileExists=$(file::file_exists $fastaFile)
+if [[ $fileExists -eq 1 ]];then
+	feedback::sayfrom "-i option requires a valid file" "error"
+	echo "$help"
+	exit 1
+else
+
+	# To this point it means that the "-i" option was not used but still there is input...
+	# for sure it has to come from STDOUT
+	data=$(cat -- "$@")
+	#Create a tmp file
+	fastaFile=$(file::make_temp_file)
+		
+	echo "$data" > $fastaFile
+	cat $fastaFile
+fi
+
+
+# Wether from parameter or stream, at this point we have a fasta file.
+# Let's check if it is a valid one.
 
 isFasta=$(file::is_fasta $fastaFile) 
 if [[ $isFasta == "0" ]];then

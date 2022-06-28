@@ -1,4 +1,7 @@
 2022-05-15
+* Fixed bug in setup_environment, that prevented "/usr/local/bin" to be searched in $PATH.
+
+2022-05-15
 * "realpath" changed for file::full_path.
 
 2022-05-13

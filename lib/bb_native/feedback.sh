@@ -18,8 +18,10 @@ feedback::sayfrom()
 
 if [ $2 = "error" ]; then
   color="red"
+  preset="[Error] "
 elif [ $2 = "warn" ]; then 
   color="lightyellow" 
+  preset="[Warn] "
 elif [ $2 = "msg" ]; then 
   color="blue"
 elif [ $2 = "success" ]; then 
@@ -29,7 +31,7 @@ elif [ $2 = "success" ]; then
 fi
 
 echo $(fgcolor lightblue "Message from: $0") $(fgcolor end)
-echo $(fgcolor $color "$1") $(fgcolor end)
+echo $(fgcolor $color  "$preset $1") $(fgcolor end)
 
 }
 
