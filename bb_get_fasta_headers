@@ -18,7 +18,7 @@
 
 
 # Source the whole BB native library.
-source $BIOBASH_NATIVE_LIB_PATH/bb_native.sh
+source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"
 
 help="
 	== BioBash get_fasta headers == 
@@ -36,11 +36,10 @@ help="
 
 #IS_INPUT_COMING
 if [[ $# -eq 0 && -t 0 ]]; then
-    feedback::say "No data stream nor input file provided" "error"
+    feedback::say "Not data stream nor input file provided" "error"
 	echo "$help"
 	exit 1
 fi
-
 
 # If we reached this point it means that data comes wether as positional parameter
 # or as data stream via pipe. First check for parameters.
@@ -63,7 +62,7 @@ done
 # If file does not exists quit. If you provide an "-i" it requires a file.
 fileExists=$(file::file_exists $fastaFile)
 if [[ $fileExists -eq 1 ]];then
-	feedback::sayfrom "-i option requires a valid file" "error"
+	feedback::sayfrom "Unable to find file: ${fastaFile}." "error"
 	echo "$help"
 	exit 1
 else

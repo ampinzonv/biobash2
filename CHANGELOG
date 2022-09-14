@@ -1,3 +1,7 @@
+2022-09-14
+* Minor changes to error msg in in bb_get_fasta_headers.
+* Issue #2 in Github marked as solved.
+
 2022-05-15
 * Fixed bug in setup_environment, that prevented "/usr/local/bin" to be searched in $PATH.
 
