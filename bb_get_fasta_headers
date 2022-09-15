@@ -34,57 +34,73 @@ help="
 # https://github.com/ampinzonv/biobash2/wiki/Blog::File-Descriptors
 # https://github.com/ampinzonv/biobash2/wiki/Blog::BB-input-behavior
 
-#IS_INPUT_COMING
+# When script is called without arguments, display help.
 if [[ $# -eq 0 && -t 0 ]]; then
-    feedback::say "Not data stream nor input file provided" "error"
 	echo "$help"
 	exit 1
 fi
 
-# If we reached this point it means that data comes wether as positional parameter
-# or as data stream via pipe. First check for parameters.
-while getopts i: option; do
-	case "${option}" in
-		i)
-			fastaFile="$OPTARG";;
+
+# Since by default BB will IGNORE any extra argument we only need to check two things.
+# 1) That data comes via "-i" option using $OPTARG. 
+# 2) That data comes from the terminal.
+# Since the only way that BB script runs without a input file via "-i" option, is if
+# data comes from terminal, we will check this first, because this overrides the use of "-i".
+# The "-t 0" option here means that comes wether re-directed or as a pipe. For example:
+#1)    [andres:~]$  ./myscript2.sh 
+#       -t 0 == true
+#2)    [andres:~]$  ./myscript2.sh myfile.txt 
+#      -t 0 == true
+#3)    [andres:~]$  cat myfile.txt | ./myscript2.sh 
+#      -t 0 == false
+#4)    [andres:~]$  ./myscript2.sh < myfile.txt
+#      -t 0 == false
+if [ -t 0 ]; then
+	#If we are here it means that BB is expecting data from the terminal.
+	# Meaning that nothing comes from the STDOUT via pipe o redirection.
+	# So the only alternative is that input data comes as argument via "-i" option.
+	while getopts i: option; 
+	do
+		case "${option}" in
+			i)
+				fastaFile="$OPTARG";;
 					
-		\?)
-			feedback::sayfrom "Unknown parameter option." "error"
-			echo "${help}"
-			exit;;
-	esac
-done
+			\?)
+				feedback::sayfrom "Unknown parameter option." "error"
+				echo "${help}"
+				exit;;
+		esac
+	done
 
+else
+	# otherwise if we are here it means that BB is expecting data NOT FROM TERMINAL
+	# but from STDOUT via a pipe or redirection.
+	data=$(cat -- "$@")
+	#Create a tmp file to hold data.
+	fastaFile=$(file::make_temp_file)
+		
+	echo "$data" > $fastaFile
+	#cat $fastaFile
+fi
 
-#Code above checks if -i is set, if set checks that is not empty. Also checks if
-# any non valid parameter has also been set. If any of those fail script stops.
-# So the only extra thing to check is if file exists (0:true 1:false). 
-# If file does not exists quit. If you provide an "-i" it requires a file.
+# To this point we have a file. Wether recently created from STDOUT or defined by the
+# user with the "-i" option. We have to make sure file exists.
 fileExists=$(file::file_exists $fastaFile)
 if [[ $fileExists -eq 1 ]];then
 	feedback::sayfrom "Unable to find file: ${fastaFile}." "error"
 	echo "$help"
 	exit 1
-else
-
-	# To this point it means that the "-i" option was not used but still there is input...
-	# for sure it has to come from STDOUT
-	data=$(cat -- "$@")
-	#Create a tmp file
-	fastaFile=$(file::make_temp_file)
-		
-	echo "$data" > $fastaFile
-	cat $fastaFile
 fi
 
 
-# Wether from parameter or stream, at this point we have a fasta file.
-# Let's check if it is a valid one.
-
+# To this point we have a file. Now let's check that it is the kind we need.
+# In this aprticular case we expect a fasta file.
 isFasta=$(file::is_fasta $fastaFile) 
 if [[ $isFasta == "0" ]];then
 
+	#--- THIS IS THE CORE OF THE SCRIPT
 	grep "^>" "$fastaFile"  | sed -e "s/>//"
+	#---
 
 else
 	feedback::sayfrom "Provided $fastaFile file, is not a valid Fasta file." "error"

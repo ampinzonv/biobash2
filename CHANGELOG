@@ -1,3 +1,6 @@
+2022-09-15
+* Functional input validation of STDIN/STDOUT (issue #3 in GitHub). Although not yet fully implemented. It partially works on bb_get_fasta_headers but has to be implemented as function.
+
 2022-09-14
 * Minor changes to error msg in in bb_get_fasta_headers.
 * Issue #2 in Github marked as solved.
