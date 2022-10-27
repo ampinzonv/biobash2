@@ -1,3 +1,7 @@
+2022-10-26
+* Input validation now is implemented in a new library called io.sh.
+* Created two functions: input_is_empty and input_is_file_or_pipe. 
+
 2022-09-15
 * Functional input validation of STDIN/STDOUT (issue #3 in GitHub). Although not yet fully implemented. It partially works on bb_get_fasta_headers but has to be implemented as function.
 

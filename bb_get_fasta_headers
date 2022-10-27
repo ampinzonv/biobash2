@@ -26,6 +26,19 @@ help="
 	usage: bb_get_fasta_headers -i [fasta file]
 	"
 
+
+
+inData=$(io::input_is_pipe_or_file)
+echo $inData
+
+
+anyInput=$(io::input_is_empty)
+if [[ $anyInput="empty" ]]; then
+	echo $anyInput
+	echo "$help"
+	exit 1
+fi
+
 #--------------------------------------------------------------------------
 #						Validate Input
 #--------------------------------------------------------------------------
@@ -35,10 +48,8 @@ help="
 # https://github.com/ampinzonv/biobash2/wiki/Blog::BB-input-behavior
 
 # When script is called without arguments, display help.
-if [[ $# -eq 0 && -t 0 ]]; then
-	echo "$help"
-	exit 1
-fi
+
+
 
 
 # Since by default BB will IGNORE any extra argument we only need to check two things.
@@ -82,6 +93,7 @@ else
 	echo "$data" > $fastaFile
 	#cat $fastaFile
 fi
+
 
 # To this point we have a file. Wether recently created from STDOUT or defined by the
 # user with the "-i" option. We have to make sure file exists.

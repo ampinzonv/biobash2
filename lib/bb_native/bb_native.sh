@@ -8,3 +8,4 @@ source $BIOBASH_NATIVE_LIB_PATH/interaction.sh
 source $BIOBASH_NATIVE_LIB_PATH/os.sh
 source $BIOBASH_NATIVE_LIB_PATH/string.sh
 source $BIOBASH_NATIVE_LIB_PATH/variable.sh
+source $BIOBASH_NATIVE_LIB_PATH/io.sh
