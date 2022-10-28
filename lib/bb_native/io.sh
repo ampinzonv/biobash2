@@ -5,20 +5,24 @@
 
 
 #####################################################################
-# @description Evaluates if input comes empty
+# @description Evaluates if the script receives at least one argument
 # @Description
 #
-# @noargs
+# @arg $1  Bash "$#" special character.
+# @return FALSE (string) if script has at least one argument.
 #####################################################################
-io::input_is_empty(){
-        local input
-
+io::script_has_args(){
+    local args
+    #By default we expect arguments
+    args="TRUE"
     # When script is called without arguments.
-    if [[ $# -eq 0 && -t 0 ]]; then 
-        input="empty"
+    if [[ $1 -eq 0 ]]; then 
+        args="FALSE"
     fi
-    echo $input
+    
+    echo "$args"
 }
+
 
 #####################################################################
 # @description Evaluates if input comes from a pipe or a file
@@ -26,15 +30,15 @@ io::input_is_empty(){
 #
 # @noargs
 #####################################################################
-io::input_is_pipe_or_file(){
+io::input_is_pipe(){
 
 
-    #True means that STDIN is connected to the terminal yet. So no pipe
-    #has been used to redirect STDIN.
-    if [ -t 0 ]; then
-        input="file"
+    #True means that data comes from a pipe "|".
+
+    if [ ! -t 0 ]; then
+        pipe="TRUE"
     else
-        input="pipe"
+        pipe="FALSE"
     fi
-    echo $input
+    echo $pipe
 }

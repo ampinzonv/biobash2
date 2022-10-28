@@ -1,3 +1,7 @@
+2022-10-28
+* io.sh is updated. input_is_empty was moved to "script_has_args". 
+* input_is_file_or_pipe was moved to "input_is_pipe".  so Each function now evaluates a specific script state.
+
 2022-10-26
 * Input validation now is implemented in a new library called io.sh.
 * Created two functions: input_is_empty and input_is_file_or_pipe. 

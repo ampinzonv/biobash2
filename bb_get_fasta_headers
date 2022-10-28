@@ -18,7 +18,10 @@
 
 
 # Source the whole BB native library.
-source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"
+source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"; 
+
+
+
 
 help="
 	== BioBash get_fasta headers == 
@@ -26,19 +29,21 @@ help="
 	usage: bb_get_fasta_headers -i [fasta file]
 	"
 
+args=$(io::script_has_args "$#")
+#echo "$args"
 
+isPipe=$(io::input_is_pipe)
+#echo "$isPipe"
 
-inData=$(io::input_is_pipe_or_file)
-echo $inData
+# If script is called without arguments and is not part of a pipe,
+# means that we should show help.
 
+if [[ $args = "FALSE" && $isPipe = "FALSE" ]]; then
 
-anyInput=$(io::input_is_empty)
-if [[ $anyInput="empty" ]]; then
-	echo $anyInput
 	echo "$help"
-	exit 1
 fi
 
+exit
 #--------------------------------------------------------------------------
 #						Validate Input
 #--------------------------------------------------------------------------
