@@ -1,3 +1,8 @@
+2022-10-31
+* io.sh functions now return 0 (TRUE) and 1 (FALSE). This is done to keep consistency across most functions in library.
+* An stable version of input check has been reached and implemented in bb_get_fasta_headers.
+* A new version of BB  with this changes released today.
+
 2022-10-28
 * io.sh is updated. input_is_empty was moved to "script_has_args". 
 * input_is_file_or_pipe was moved to "input_is_pipe".  so Each function now evaluates a specific script state.

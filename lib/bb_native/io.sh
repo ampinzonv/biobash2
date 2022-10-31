@@ -9,15 +9,16 @@
 # @Description
 #
 # @arg $1  Bash "$#" special character.
-# @return FALSE (string) if script has at least one argument.
+# @return 0 if script has at least one argument.
+# @return 1 if script has no arguments.
 #####################################################################
 io::script_has_args(){
     local args
     #By default we expect arguments
-    args="TRUE"
+    args=0
     # When script is called without arguments.
     if [[ $1 -eq 0 ]]; then 
-        args="FALSE"
+        args=1
     fi
     
     echo "$args"
@@ -29,16 +30,18 @@ io::script_has_args(){
 # @Description
 #
 # @noargs
+# @return 0 if script is piped
+# @return 1 any other circumstance.
 #####################################################################
 io::input_is_pipe(){
 
 
-    #True means that data comes from a pipe "|".
+    # "0" (True) means that data comes from a pipe "|".
 
     if [ ! -t 0 ]; then
-        pipe="TRUE"
+        pipe=0
     else
-        pipe="FALSE"
+        pipe=1
     fi
     echo $pipe
 }
