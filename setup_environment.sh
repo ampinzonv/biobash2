@@ -47,7 +47,7 @@ if [[ ! -e "${HOME}/.bashrc" ]];then
 		touch "${HOME}"/.bashrc 
 		echo "#This file was automatically created by BioBash" >> "${HOME}"/.bashrc
 	else
-	    echo "ERROR: Installation can not proceed. Unknown reason."
+	    echo "ERROR: Installation could not proceed during creation of a new bashrc file. Unknown reason."
 	    exit 1
 	fi
 fi
@@ -171,7 +171,7 @@ fi
 
 
 echo "
-#                          - BIOBASH -
+#BIOBASH-BEGIN
 # This section was automatically added to your .bashrc file by the
 # BIOBASH installer on: ${rightNow}.
 # A copy of your original .bashrc file was created with name: .bashrc_BB.backup.${rightNow}
@@ -207,7 +207,7 @@ export BIOBASH_NATIVE_LIB
 
 export PATH="$BIOBASH_HOME:$BIOBASH_BIN_OS:$BIOBASH_BIN:$PATH"
 
-
+#BIOBASH-END
 " >> "$HOME"/.bashrc
 
 #Make all variables accesible to this shell.

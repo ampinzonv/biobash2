@@ -1,4 +1,8 @@
 2022-10-31
+* Uninstallation now erases BB paths from PATH. echo $PATH is now uncluttered.
+* BB installer now hadds a BEGIN and END section to .bashrc. This will be useful for erasing the whole content in uninstallation script.
+
+2022-10-31
 * io.sh functions now return 0 (TRUE) and 1 (FALSE). This is done to keep consistency across most functions in library.
 * An stable version of input check has been reached and implemented in bb_get_fasta_headers.
 * A new version of BB  with this changes released today.
