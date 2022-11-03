@@ -80,7 +80,7 @@ fi
 rightNow=$(date +%m-%d-%Y)
 
 echo "
-In order to function properly, BioBash requires to modify your $HOME/.bashrc file.
+$(emoji bell) [NOTICE!] In order to function properly, BioBash requires to modify your $HOME/.bashrc file.
 Basically I will append some variables at the end and will not modify your pre-existent
 configuration.
 Nevertheless I will also create a backup of your actual .bashrc file in the same place where your actual

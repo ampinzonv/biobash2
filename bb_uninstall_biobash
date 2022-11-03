@@ -13,7 +13,7 @@ source $BIOBASH_LIB/shml/shml.sh
 # A response from: https://unix.stackexchange.com/users/1655/amphetamachine
 remove_from_path(){
 
-    echo "Cleaning up $1 from PATH."
+    echo "Removing $1 from PATH."
     dir_to_remove=$1
     PATH=:$PATH:
     while [[ $PATH = *":$dir_to_remove:"* ]]; do
@@ -40,11 +40,9 @@ $(hr)
 
   and all its contents will be $(attribute bold)completely erased$(attribute end).
 
-  Your .bashrc file will be untouched, and all variables that were appended to it
-  during BioBash installation will be kept. They should not cause any harm, but
-  $(attribute underline)it is recommended to edit your .bashrc$(attribute end) and remove the whole BioBash section from it. 
-  
-  In future versions of this uninstaller we hope we could do that automatically.
+  Your .bashrc file will be also edited and all variables that were appended to it
+  during BioBash installation will be erased. This is a safe procedure and your bashrc file
+  will still hold all other configurations.
 "
 #Flow control. Answer should be "y" or "n"
 continue=0
@@ -65,17 +63,28 @@ if [[ $continue == "n" ]]; then
     
 elif [[ $continue == "y" ]];then
 
-
-    #Before removing BIOBASH_HOME clean path. Since installation appends BB install dir to
+    #################################################################
+    #
+    #  ACTUALLY REMOVING BIOBASH
+    #
+    #################################################################
+    # Before removing BIOBASH_HOME clean path. Since installation appends BB install dir to
     # PATH after several installs it is cluttered.
+
+    echo " 
+$(emoji check) Cleaning up PATH: 
+    "
     remove_from_path "$BIOBASH_HOME"
     remove_from_path "$BIOBASH_BIN"
     remove_from_path "$BIOBASH_BIN_OS"
 
-
+    # Edit bashrc file
+    # This line of code will erase anything between #BIOBASH-BEGIN and #BIOBASH-END
+    # tags.
+    sed -ie "/^#BIOBASH-BEGIN/,/^#BIOBASH-END/d" ~/.bashrc
 
     echo "
-    Removing: $BIOBASH_HOME"
+$(emoji check) Removing: $BIOBASH_HOME"
     rm -Rf $BIOBASH_HOME
     
     #Check that directory was actually removed from system.
@@ -89,7 +98,8 @@ elif [[ $continue == "y" ]];then
         exit 1
         
     elif [[ ! -e $BIOBASH_HOME ]];then
-        echo "Uninstall was succesful.
+        echo "
+        Uninstall was succesful. Thank you for using BioBash
         Bye. $(emoji wave)
     
         "

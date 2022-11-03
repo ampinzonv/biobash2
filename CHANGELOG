@@ -1,4 +1,8 @@
-2022-10-31
+2022-11-3
+* Uninstaller now cleans up bashrc file ufter unistallation.
+* Other minor aesthetic updates  implemented in install/Uninstall.
+
+2022-11-2
 * Uninstallation now erases BB paths from PATH. echo $PATH is now uncluttered.
 * BB installer now hadds a BEGIN and END section to .bashrc. This will be useful for erasing the whole content in uninstallation script.
 
