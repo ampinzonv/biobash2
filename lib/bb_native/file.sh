@@ -287,7 +287,7 @@ file::is_fasta()
 {
     declare fastaFile=$1
     if [ "$(grep -c "^>" $fastaFile)" -ge 1 ]; then
-       return=0
+        return=0
     else
         return=1
     fi

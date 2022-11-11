@@ -1,0 +1,78 @@
+#!/bin/bash
+# @file bb_count_seqs 
+# @brief Counts the number of sequences in a fasta/fastq file.
+# @description 
+#	Outputs the number of sequences present ina fasta or fastq file.
+#	It can be a single or multiple fasta/fastq file.
+# @example 
+#	bb_count_seqs -i file 
+# @arg $1 A valid  file.
+# @exitcode 0 if succesful
+# @exitcode 1 if unsuccesful
+#
+
+# Source the whole BB native library.
+source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"; 
+
+help="
+	== BioBash count_seqs == 
+
+	usage: bb_count_seqs -i [fasta/fastq file]
+	"
+
+#--------------------------------------------------------------------
+# This whole section validates Input
+#--------------------------------------------------------------------
+hasArgs=$(io::script_has_args "$#")
+isPipe=$(io::input_is_pipe)
+
+if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
+
+	echo "$help"
+	exit 0
+fi
+
+if [ $hasArgs = 0 ];then
+	while getopts i: option; 
+	do
+		case "${option}" in
+			i)
+				file="$OPTARG";;	
+				#echo $fastaFile
+			\?)
+				feedback::sayfrom "Unknown parameter option." "error"
+				echo "${help}"
+				exit;;
+		esac
+	done
+elif [ $hasArgs = 1 ];then
+
+	data=$(cat -- "$@")
+
+	file=$(file::make_temp_file)
+	tmpFile=0
+
+	echo "$data" > $file
+
+fi
+
+# To this point we have a file. Wether recently created from STDOUT or defined by the
+# user with the "-i" option.
+fileExists=$(file::file_exists $file)
+if [[ $fileExists -eq 1 ]];then
+	feedback::sayfrom "Unable to find file: ${file}. Maybe missing -i option?" "error"
+	echo "$help"
+	exit 1
+fi
+#--------------------------------------------------------------------
+# This whole section validates Input
+#--------------------------------------------------------------------
+
+seqcount -auto -error -fatal -die -stdout -sequence $file 
+
+# Not here that $tmpFastaFile is quoted and that we are using "==" instead of"
+# "-eq". This is because BB was complaining about a unary operator expected.
+# The whole theory here: https://codefather.tech/blog/bash-unary-operator-expected/
+if [ "$tmpFastaFile" == 0 ];then
+	rm $fastaFile
+fi

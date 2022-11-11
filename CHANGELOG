@@ -1,4 +1,8 @@
 2022-11-3
+* Solved bug in setup_environment that hardcoded the full $PATH in .bashrc file. This prevented any actualization of PATH variable to take effect, because it was already hardcoded by Biobash installer. Now the variable "$PATH" is writen in the .bashrc file not the hardcoded path (line 208).
+* Fixed bug in bb_get_fasta_headers line 116 with expected unary operator when running script with "-i".
+
+2022-11-3
 * Uninstaller now cleans up bashrc file ufter unistallation.
 * Other minor aesthetic updates  implemented in install/Uninstall.
 

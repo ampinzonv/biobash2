@@ -110,7 +110,10 @@ if [[ $isFasta == "0" ]];then
 	#---
 
 	# ONLY EXECUTED when data comes from a pipe and temp file was created above.
-	if [ $tmpFastaFile -eq 0 ];then
+	# Note here that $tmpFastaFile is quoted and that we are using "==" instead of"
+	# "-eq". This is because BB was complaining about a unary operator expected.
+	# The whole theory here: https://codefather.tech/blog/bash-unary-operator-expected/
+	if [ "$tmpFastaFile" == 0 ];then
 		rm $fastaFile
 	fi
 
