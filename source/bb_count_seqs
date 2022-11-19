@@ -12,7 +12,8 @@
 #
 
 # Source the whole BB native library.
-source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"; 
+source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
+source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
 
 help="
 	== BioBash count_seqs == 
@@ -70,9 +71,11 @@ fi
 
 seqcount -auto -error -fatal -die -stdout -sequence $file 
 
-# Not here that $tmpFastaFile is quoted and that we are using "==" instead of"
+# Note here that $tmpFastaFile is quoted and that we are using "==" instead of
 # "-eq". This is because BB was complaining about a unary operator expected.
 # The whole theory here: https://codefather.tech/blog/bash-unary-operator-expected/
 if [ "$tmpFastaFile" == 0 ];then
 	rm $fastaFile
 fi
+
+exit 0

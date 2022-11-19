@@ -18,7 +18,11 @@
 
 
 # Source the whole BB native library.
-source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"; 
+# source "$BIOBASH_NATIVE_LIB_PATH/bb_native.sh"; 
+
+# Only source libraries needed.
+source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
+source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
 
 
 help="
