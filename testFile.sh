@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source lib/bb_native/file.sh
 
 echo "[Input file]: $1"

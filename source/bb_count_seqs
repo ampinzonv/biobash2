@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @file bb_count_seqs 
 # @brief Counts the number of sequences in a fasta/fastq file.
 # @description 

@@ -1,9 +1,12 @@
+2022-11-28
+* Shebang changed to /usr/bin/env bash in all scripts.
+* New feedback::help function added to feedback lib.
+* Created structure to work with  bb_get_nr_list
+
 2022-11-19
 * Emboss added to the list of dependencies check.
 * BB main scripts now moved to a directory called "source".
 * in "installbiobash" script BB main scripts are now copied from "source" directory.
-
-
 
 2022-11-3
 * Solved bug in setup_environment that hardcoded the full $PATH in .bashrc file. This prevented any actualization of PATH variable to take effect, because it was already hardcoded by Biobash installer. Now the variable "$PATH" is writen in the .bashrc file not the hardcoded path (line 208).

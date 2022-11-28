@@ -65,3 +65,21 @@ echo $(fgcolor $color "$1") $(fgcolor end)
 
 }
 
+
+# @description Displays a help message.
+#
+# @example
+# 	feedback::help "script name"
+#
+# @arg $1 What you want to display
+feedback::help()
+{
+  echo ""
+  echo "$(indent) $(emoji star) $(attribute bold "BIOBASH V.")$(attribute end)"
+  echo "$(indent) $(a dim "$0") $(a end)"
+  echo ""
+  echo "$(indent) Usage:"
+  echo "$(indent) $*"
+  echo ""
+  
+}

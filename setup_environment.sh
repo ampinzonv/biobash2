@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This file sets up the environment for BIOBASH to run. Basically
 # it writes a set of environment variables  to .bashrc file.
 

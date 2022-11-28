@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @file bb_get_fasta_headers 
 # @brief Extracts headers from a single/multiple fasta file.
 # @description 

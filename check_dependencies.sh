@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Script to check core dependencies necessary for BIOBASH to run.
 # These core dependencies are general for all programs or sometimes for some
