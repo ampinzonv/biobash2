@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 source $BIOBASH_HOME/lib/shml/shml.sh
+source $BIOBASH_HOME/lib/bb_native/file.sh
+
 
 # @file Feedback
 # @brief Functions to handle user feedback and message prompting
@@ -69,17 +71,21 @@ echo $(fgcolor $color "$1") $(fgcolor end)
 # @description Displays a help message.
 #
 # @example
-# 	feedback::help "script name"
+# 	feedback::help $Description $Message
 #
-# @arg $1 What you want to display
+# @arg $1 Script description.
+# @arg $2 Script usage.
 feedback::help()
 {
+
+  script=$(file::basename $0)
   echo ""
-  echo "$(indent) $(emoji star) $(attribute bold "BIOBASH V.")$(attribute end)"
-  echo "$(indent) $(a dim "$0") $(a end)"
+  echo "$(indent) $(color red)>$(color end) $(attribute bold "$script.")$(attribute end) "
+  echo "$(indent) $(a dim "$1") $(a end)"
+  echo "$(indent) $(a dim "---") $(a end)"
   echo ""
   echo "$(indent) Usage:"
-  echo "$(indent) $*"
+  echo "$(indent) $2"
   echo ""
   
 }

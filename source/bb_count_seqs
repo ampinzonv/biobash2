@@ -14,12 +14,8 @@
 # Source the whole BB native library.
 source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
 source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
+source "$BIOBASH_NATIVE_LIB_PATH/feedback.sh";
 
-help="
-	== BioBash count_seqs == 
-
-	usage: bb_count_seqs -i [fasta/fastq file]
-	"
 
 #--------------------------------------------------------------------
 # This whole section validates Input
@@ -29,7 +25,10 @@ isPipe=$(io::input_is_pipe)
 
 if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 
-	echo "$help"
+	helpDesc="Counts the number of fasta/fastq entries in a file."
+	helpUsage="bb_count_seqs -i [fasta/fastq file]"
+
+	feedback::help  "$helpDesc" "$helpUsage"
 	exit 0
 fi
 

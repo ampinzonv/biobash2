@@ -21,8 +21,13 @@ isPipe=$(io::input_is_pipe)
 
 if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 
-	helpMsg=$(echo "bb_get_nr_list -i [one column file]")
-	feedback::help $helpMsg
+	helpUsage="bb_get_nr_list -i [file]
+	Where [file] is a redundant one column (sorted or unsorted) simple text file."
+
+	helpDesc="Retrieves a sorted and non redundant list of items."
+
+	# DO NOT FORGET to quote the variables.
+	feedback::help  "$helpDesc" "$helpUsage"
 	exit 0
 fi
 
@@ -44,17 +49,17 @@ elif [ $hasArgs = 1 ];then
 
 	data=$(cat -- "$@")
 
-	listFile=$(file::make_temp_file)
+	inputFile=$(file::make_temp_file)
+
 	#This is  hack used to clean the environment. The only reason we will erase user data
 	# is because we created, as this temporary file.  This flag will let us know that
 	# we can safely erase this file.
-
-	tmpInputFile=0
+	eraseFile=0
 
 	# write to file	
 	echo "$data" > $inputFile
-
 fi
+
 fileExists=$(file::file_exists $inputFile)
 if [[ $fileExists -eq 1 ]];then
 	feedback::sayfrom "Unable to find file: ${inputFile}. Maybe missing -i option?" "error"
@@ -62,6 +67,35 @@ if [[ $fileExists -eq 1 ]];then
 	exit 1
 fi
 
+# To this point we have a file to work with. No need to check if it FASTA. 
+# Still we do not have a function: "isList" as in "isFASTA" or "isFASTQ".
 
+
+
+
+#-------------------------------- SCRIPT'S CORE ---------------------------
+
+FILEA=$(file::make_temp_file)
+FILEB=$(file::make_temp_file)
+FILEC=$(file::make_temp_file)
+	
+cat $inputFile | sort  > $FILEA
+uniq -u $FILEA > $FILEB   #Only lines that are not repeated
+uniq -d $FILEA > $FILEC   #Only lines that are repeated.
+cat $FILEB $FILEC | sort
+
+#-------------------------------------------------------------------------
+
+
+#Cleaning UP
+# ONLY EXECUTED when data comes from a pipe and temp file was created above.
+# Note here that $tmpFastaFile is quoted and that we are using "==" instead of"
+# "-eq". This is because BB was complaining about a unary operator expected.
+# The whole theory here: https://codefather.tech/blog/bash-unary-operator-expected/
+if [ "$eraseFile" == 0 ];then
+	rm $inputFile
+fi
+
+rm $FILEA $FILEB $FILEC
 
 exit

@@ -1,3 +1,9 @@
+2022-12-02
+* bb_get_nr_list added to the set of scripts.
+* A new mets.lst file added to the set of testdata.
+* Improved feedback::help function. Now accepts two string variables.
+
+
 2022-11-28
 * Shebang changed to /usr/bin/env bash in all scripts.
 * New feedback::help function added to feedback lib.

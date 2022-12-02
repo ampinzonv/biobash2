@@ -23,13 +23,8 @@
 # Only source libraries needed.
 source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
 source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
+source "$BIOBASH_NATIVE_LIB_PATH/feedback.sh";
 
-
-help="
-	== BioBash get_fasta headers == 
-
-	usage: bb_get_fasta_headers -i [fasta file]
-	"
 
 #--------------------------------------------------------------------------
 #						Validate Input
@@ -47,9 +42,12 @@ isPipe=$(io::input_is_pipe)
 # means that we should show help.
 if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 
-	echo "$help"
+	helpDesc="Retrieves all fasta headers in a (single/multiple) fasta file."
+	helpUsage="bb_get_fasta_headers -i [fasta file]"
+
+	feedback::help  "$helpDesc" "$helpUsage"
 	exit 0
-fi
+fi	
 
 # Since the most common case is to call the script with an argument. We'll
 # evaluate that one first. 
