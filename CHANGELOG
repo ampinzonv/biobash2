@@ -1,3 +1,6 @@
+2023-01-12
+* get_nr_list and get_freq_from_list now merged into a sigle script: bb_get_list (-f option to get frequencies).
+
 2022-12-02
 * bb_get_nr_list added to the set of scripts.
 * A new mets.lst file added to the set of testdata.
