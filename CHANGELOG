@@ -1,4 +1,7 @@
 2023-01-12
+* Fixed bug in bb_get_list when data came from a pipe and the "-f" option was present.
+
+2023-01-12
 * get_nr_list and get_freq_from_list now merged into a sigle script: bb_get_list (-f option to get frequencies).
 
 2022-12-02

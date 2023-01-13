@@ -56,7 +56,11 @@ fi
 # DEALING WITH DATA STREAM STDIN == STDOUT (terminal)
 if [[ $isPipe = 0 ]]; then
 
-	#data=$(cat -- "$@")
+	# It is key to capture the data stream using $(cat -) and not: $(cat -- "$@")
+    # The latter cuases a lot of problems during pipes with arguments such as:
+    # cat "hola" | bb_get_list -f
+    #check: https://stackoverflow.com/questions/2746553/read-values-into-a-shell-variable-from-a-pipe
+    # 
     data=$(cat -)
 	inputFile=$(file::make_temp_file)
     # write to file	
