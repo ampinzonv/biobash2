@@ -1,3 +1,8 @@
+2023-01-17
+* bb_get_list renamed to bb_get_nr_list, still mantains the same double behaviour of displaying a nr list with or without frequencies.
+* Added new script bb_extract_subset_from_list.
+* New tagged version (0.1.3) released.
+
 2023-01-12
 * Fixed bug in bb_get_list when data came from a pipe and the "-f" option was present.
 

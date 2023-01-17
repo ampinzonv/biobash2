@@ -71,6 +71,7 @@ if [[ $isPipe = 0 ]]; then
 	# we can safely erase this file.
 	eraseFile=0
 
+    
     if [[ $hasArgs = 0 ]]; then
 
         while getopts f option; 
@@ -123,7 +124,9 @@ if [ "$freq" == TRUE ]; then
     while read line
     do	
         # get first colum: frequency. At this point each row in FILEA variable looks like:
-        #    2 itemA
+        # 2 itemA
+        # 6 itemB
+        # ...
         # So we will get the first column (2) and second one (itemA),
         freq=$(echo $line | awk '{print $1}') 
         freq=$(echo $freq "	") #put a tab after the column
