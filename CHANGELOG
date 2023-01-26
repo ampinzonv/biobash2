@@ -1,3 +1,8 @@
+2026-01-23
+* Added a protein test file :apoe_prot.fasta
+* Dummy function (file::guess_sequence_type) to guess if a file holds nucleotide or aminoacid data is added to lib/bb_native/file.sh.
+* Added non production stable bb_sequence_info script.
+
 2023-01-17
 * bb_get_list renamed to bb_get_nr_list, still mantains the same double behaviour of displaying a nr list with or without frequencies.
 * Added new script bb_extract_subset_from_list.

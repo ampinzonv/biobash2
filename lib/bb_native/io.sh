@@ -21,7 +21,7 @@ io::script_has_args(){
         args=1
     fi
     
-    echo "$args"
+    echo "${args}"
 }
 
 
@@ -34,8 +34,7 @@ io::script_has_args(){
 # @return 1 any other circumstance.
 #####################################################################
 io::input_is_pipe(){
-
-
+    
     # "0" (True) means that data comes from a pipe "|".
 
     if [ ! -t 0 ]; then
@@ -43,5 +42,5 @@ io::input_is_pipe(){
     else
         pipe=1
     fi
-    echo $pipe
+    echo "${pipe}"
 }

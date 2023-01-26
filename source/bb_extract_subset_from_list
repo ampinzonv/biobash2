@@ -100,7 +100,6 @@ if [[ $isPipe = 0 ]]; then
 
 fi
 
-
 # To this point we want both parameters (-i and -p ) to be present, if not exit.
 # thanks to: https://unix.stackexchange.com/questions/621004/bash-getopts-mandatory-arguments
 shift "$(( OPTIND - 1 ))"

@@ -64,9 +64,7 @@ if [[ $fileExists -eq 1 ]];then
 	echo "$help"
 	exit 1
 fi
-#--------------------------------------------------------------------
-# This whole section validates Input
-#--------------------------------------------------------------------
+
 
 seqcount -auto -error -fatal -die -stdout -sequence $file 
 

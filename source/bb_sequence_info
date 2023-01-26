@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# @file bb_fasta_info
+# @brief Displays general information from a FASTA (Nucleotide or protein) or FASTQ file.
+# @description 
+#	This function displays statistics from a fasta/fastq  files holding nucleotide or protein information.
+# @example 
+#	bb_seq_info -i [FILE] -t [type]
+# @arg -i FASTA/FASTQ file.
+# @arg -t Sequence type: N or P (nucleotide or protein)
+
+# Only source libraries needed.
+source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
+source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
+source "$BIOBASH_NATIVE_LIB_PATH/feedback.sh";
+
+hasArgs=$(io::script_has_args "$#")
+isPipe=$(io::input_is_pipe)
+
+# If there are no arguments and not data stream.
+if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
+
+	helpUsage="bb_fasta_info -i [file] -t [sequence type]
+	Where [file] is  FASTA/FASTQ file. 
+       Sequence type (-t) can be wether P|p for protein sequence or N|n for nucleotide sequence."
+       
+
+	helpDesc="Displays general information from a FASTA (Nucleotide or protein) or FASTQ file."
+
+	# DO NOT FORGET to quote the variables.
+	feedback::help  "$helpDesc" "$helpUsage"
+	exit 0
+fi
+
+
+if [[ $hasArgs = 0 && $isPipe = 1 ]]; then
+	while getopts i:t: option; 
+	do
+		case "${option}" in
+
+			i) 
+                inputFile="$OPTARG";;
+            t) 
+                type="$OPTARG";;
+			\?)
+				feedback::sayfrom "Unknown parameter option." "error"
+				exit;;
+		esac
+	done
+fi
+
+#######################################################
+# DEALING WITH DATA STREAM STDIN == STDOUT (terminal)
+#
+# Since we have mandatory arguments this is necessary, hwe are here because data
+# comes from a pipe and it should have arguments.
+#######################################################
+
+if [[ $isPipe = 0 ]]; then
+
+
+	# It is key to capture the data stream using $(cat -) and not: $(cat -- "$@")
+    # The latter cuases a lot of problems during pipes with arguments such as:
+    # cat "hola" | bb_get_list -f
+    #check: https://stackoverflow.com/questions/2746553/read-values-into-a-shell-variable-from-a-pipe
+    # 
+    data=$(cat -)
+	inputFile=$(file::make_temp_file)
+    # write to file	
+	echo "$data" > $inputFile
+
+	#This is  hack used to clean the environment. The only reason we will erase user data
+	# is because we created, as this temporary file.  This flag will let us know that
+	# we can safely erase this file.
+	eraseFile=0
+
+
+    while getopts t: option; 
+    do
+        case "${option}" in
+                
+        t)
+            type="$OPTARG";;
+                    
+        \?)
+            feedback::sayfrom "Unknown parameter option." "error"
+            echo "${help}"
+            exit;;
+        esac
+    done 
+fi
+
+# To this point we want both parameters (-i and -p ) to be present, if not then exit.
+# thanks to: https://unix.stackexchange.com/questions/621004/bash-getopts-mandatory-arguments
+shift "$(( OPTIND - 1 ))"
+if [ -z "$inputFile" ] || [ -z "$type" ]; then
+        feedback::sayfrom "Missing -i or -t option"  "error"
+        exit 1
+fi
+
+# Asses data type. In future version we could implement the function
+# file::guess_sequence_type() By now we have to rely on user definition of data type.
+if [[ "$type" == "P"  || "$type" == "p" ]]; then 
+    
+    dataType="prot"
+    
+elif [[ "$type" == "N"  || "$type" == "n" ]]; then 
+
+    dataType="nuc"
+
+else
+
+    feedback::sayfrom "-t option should be P,p, N or n." "error"
+	exit 1
+
+fi
+
+#####################################################################
+# To this point we have a file and a valid data type.
+#####################################################################
+
+# ------ Check if file exists -------
+fileExists=$(file::file_exists $inputFile)
+if [[ $fileExists -eq 1 ]];then
+	feedback::sayfrom "Unable to find file: ${inputFile}." "error"
+	exit 1
+fi
+
+# ------ Check if it is a valid fasta file -------
+isFasta=$(file::is_fasta $inputFile) 
+if [[ $isFasta == "0" ]]; then
+	true
+fi
+
+#####################################################################
+#                       SCRIPT'S CORE
+#####################################################################
+
+# ---- Working on nucleotide data
+seqNumber=$($BIOBASH_HOME/source/bb_count_seqs -i $inputFile)
+echo "Found  $seqNumber sequences in input file."
+echo "---"
+
+
+if [[ $dataType = "nuc" ]]; then
+
+	# FASTQ?
+	isFastq=$(file::is_fastq $inputFile)
+	if [[  $isFastq -eq 0  ]];then
+		
+		
+		seqtk fqchk $inputFile | head -n 3
+		
+		
+
+	else
+
+		infoseq -sequence $inputFile -auto -stdout -only -name -length -pgc -desc
+		
+
+	fi
+
+	exit 0
+
+fi
+
+
+# ----  Working on protein data
+if [[ $dataType = "prot" ]]; then
+
+	pepstats -sequence $inputFile -auto -stdout
+
+	exit 0
+
+fi
+
+
+exit 1

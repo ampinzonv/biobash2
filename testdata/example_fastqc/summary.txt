@@ -1,0 +1,10 @@
+PASS	Basic Statistics	example.fastq
+FAIL	Per base sequence quality	example.fastq
+FAIL	Per sequence quality scores	example.fastq
+FAIL	Per base sequence content	example.fastq
+WARN	Per sequence GC content	example.fastq
+PASS	Per base N content	example.fastq
+WARN	Sequence Length Distribution	example.fastq
+PASS	Sequence Duplication Levels	example.fastq
+PASS	Overrepresented sequences	example.fastq
+PASS	Adapter Content	example.fastq
