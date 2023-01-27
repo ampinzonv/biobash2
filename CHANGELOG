@@ -1,3 +1,6 @@
+2026-01-27
+* bb_sequence_info now also determines n50 on fasta files.
+
 2026-01-23
 * Added a protein test file :apoe_prot.fasta
 * Dummy function (file::guess_sequence_type) to guess if a file holds nucleotide or aminoacid data is added to lib/bb_native/file.sh.

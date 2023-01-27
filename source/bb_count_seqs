@@ -71,8 +71,8 @@ seqcount -auto -error -fatal -die -stdout -sequence $file
 # Note here that $tmpFastaFile is quoted and that we are using "==" instead of
 # "-eq". This is because BB was complaining about a unary operator expected.
 # The whole theory here: https://codefather.tech/blog/bash-unary-operator-expected/
-if [ "$tmpFastaFile" == 0 ];then
-	rm $fastaFile
+if [ "$tmpFile" == 0 ];then
+	rm $file
 fi
 
 exit 0
