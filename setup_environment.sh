@@ -126,6 +126,7 @@ elif [ "$(uname)" == "Linux" ];then
 else
     echo "
     Impossible to detect the operating system you are installing BioBash on.
+	Please manually select your operating system.:
     "
     
     myos=0
@@ -134,11 +135,16 @@ else
     do
         read -p 'Please select between: Linux or OSX: ' continue
     done
-    #BE CAREFUL here with Linux (capital L) and linux.
+    
+	#BE CAREFUL here with Linux (capital L) and linux.
     if [[ $myos == "Linux" ]];then
+
         OS="linux"
+
     elif [[ $myos == "OSX" ]];then
+
         OS="osx"
+
     else
         echo "[ERROR] Unable to detect which Operating System we are working on. Quitting"
         exit 1
@@ -146,6 +152,58 @@ else
     
 fi
 
+
+#------------    SYSTEM ARCHITECTURE   ----------
+#
+# Now that we have assesed the OS, let's determine the architecture.
+# This info will be used to call appropriate pre-installed binaries (BLAST, seqkit etc)
+# As well as to be aware of available cores.
+#--------------------------------------------------------
+if [[ $OS == "linux" ]];then
+
+	numCores=$(cat /proc/cpuinfo | grep processor | wc -l)
+	arch=$(getconf LONG_BIT)
+
+elif [[ $OS == "osx" ]];then
+
+	numCores=$(sysctl machdep.cpu.core_count | awk '{ print $2 }')
+	arch=$(getconf LONG_BIT)
+
+else
+    echo "[ERROR] Unable to detect which Operating System we are working on. Quitting"
+    exit 1
+fi
+
+
+
+if [ -n "$numCores" ] && [ "$numCores" -eq "$numCores" ] 2>/dev/null; then
+	true
+else
+
+	echo "[WARNING] Unable to determine the number of CPU cores in the systems. Defaulting to 1.
+	This is not harmful but in some cases will slow down some routines that benefit from 
+	multi-core architectures."
+
+	numCores=1
+fi
+
+
+
+if [ -n "$arch" ] && [ "$arch" -eq "$arch" ] 2>/dev/null; then
+	true
+else
+
+	echo "[WARNING] Unable to determine the architechture of your system. Defaulting to 32bits.
+	This is not harmful but in some cases will slow down BioBash because 32 bits versions of
+	pre-installed software will be used."
+	
+	arch=32
+fi
+
+
+#------------    WRITE BASHRC   ----------
+
+#--------------------------------------------------------
 #This $1 variable comes from installbiobash script. Basically it is the installDir path +
 # biobash version, converted into a directory.
 BIOBASH_HOME=$1
@@ -160,14 +218,24 @@ BASHUTILITY_LIB_PATH="$BIOBASH_LIB/bash-utility"
 BASHUTILITY_LIB="$BASHUTILITY_LIB_PATH/bash_utility.sh"
 BIOBASH_NATIVE_LIB_PATH="$BIOBASH_LIB/bb_native"
 BIOBASH_NATIVE_LIB="$BB_NATIVE_LIB_PATH/bb_native.sh"
+BIOBASH_CORES=$numCores
 
 if [[ $OS == "linux" ]];then
-    BIOBASH_BIN_OS="$BIOBASH_BIN/$BIOBASH_OS"
+    BIOBASH_BIN_OS="$BIOBASH_BIN/$BIOBASH_OS/$arch"
 fi
 if [[ $OS == "osx" ]];then
-    BIOBASH_BIN_OS="$BIOBASH_BIN/$BIOBASH_OS"
+    BIOBASH_BIN_OS="$BIOBASH_BIN/$BIOBASH_OS/$arch"
 fi
 
+
+# Since we are installing particular versions of BLAST, seqtk, clustalw (and maybe more)...
+# BIOBASH_BIN_OS should not be exported to PATH only as env var. It could create conflicts with 
+# existing versions of the same software installed by user. 
+# Deprecated:
+# export PATH="$BIOBASH_HOME:$BIOBASH_BIN_OS:$BIOBASH_BIN:\$PATH"
+#
+# Now using:
+# export PATH="$BIOBASH_HOME:$BIOBASH_BIN:\$PATH"
 
 
 echo "
@@ -191,6 +259,7 @@ BASHUTILITY_LIB_PATH="$BASHUTILITY_LIB_PATH"
 BASHUTILITY_LIB="$BASHUTILITY_LIB"
 BIOBASH_NATIVE_LIB_PATH="$BIOBASH_NATIVE_LIB_PATH"
 BIOBASH_NATIVE_LIB="$BIOBASH_NATIVE_LIB"
+BIOBASH_CORES="$BIOBASH_CORES"
 
 
 export BIOBASH_HOME
@@ -203,9 +272,10 @@ export BASHUTILITY_LIB_PATH
 export BASHUTILITY_LIB
 export BIOBASH_NATIVE_LIB_PATH
 export BIOBASH_NATIVE_LIB
+export BIOBASH_CORES
 
 
-export PATH="$BIOBASH_HOME:$BIOBASH_BIN_OS:$BIOBASH_BIN:\$PATH"
+export PATH="$BIOBASH_HOME:$BIOBASH_BIN:\$PATH"
 
 #BIOBASH-END
 " >> "$HOME"/.bashrc
