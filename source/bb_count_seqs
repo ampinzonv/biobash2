@@ -66,7 +66,10 @@ if [[ $fileExists -eq 1 ]];then
 fi
 
 
-seqcount -auto -error -fatal -die -stdout -sequence $file 
+# EMBOSS command line. 
+#seqcount -auto -error -fatal -die -stdout -sequence $file 
+
+$BIOBASH_BIN_OS/seqkit stats -a -T $file  | sed '1d' | awk '{ print $4 }'
 
 # Note here that $tmpFastaFile is quoted and that we are using "==" instead of
 # "-eq". This is because BB was complaining about a unary operator expected.

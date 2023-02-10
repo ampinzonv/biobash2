@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # @file bb_fasta_info
-# @brief Displays general information from a FASTA (Nucleotide or protein) or FASTQ file.
+# @brief Displays general information from a FASTA (Nucleotide) or FASTQ file.
 # @description 
-#	This function displays statistics from a fasta/fastq  files holding nucleotide or protein information.
+#	This function displays statistics from a fasta/fastq  files holding nucleotide  information.
 # @example 
-#	bb_seq_info -i [FILE] -t [type]
+#	bb_seq_info -i [FILE] -p [INT]
 # @arg -i FASTA/FASTQ file.
-# @arg -t Sequence type: N or P (nucleotide or protein)
+# @arg -p  Processors (optional): Number of processor (cpu cores) to use.
 
 # Only source libraries needed.
 source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
@@ -21,12 +21,12 @@ isPipe=$(io::input_is_pipe)
 # If there are no arguments and not data stream.
 if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 
-	helpUsage="bb_fasta_info -i [file] -t [sequence type]
+	helpUsage="bb_fasta_info -i [file] -p [Number]
 	Where [file] is  FASTA/FASTQ file. 
-       Sequence type (-t) can be wether P|p for protein sequence or N|n for nucleotide sequence."
+       Processors (-p) Number of processor (cpu cores) to use."
        
 
-	helpDesc="Displays general information from a FASTA (Nucleotide or protein) or FASTQ file."
+	helpDesc="Displays general information from a FASTA (Nucleotide) or FASTQ file."
 
 	# DO NOT FORGET to quote the variables.
 	feedback::help  "$helpDesc" "$helpUsage"
@@ -34,21 +34,27 @@ if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 fi
 
 
+#Define a default value for CPU cores to use.
+cores=1
+
 if [[ $hasArgs = 0 && $isPipe = 1 ]]; then
-	while getopts i:t: option; 
+	while getopts i:p: option; 
 	do
 		case "${option}" in
 
 			i) 
                 inputFile="$OPTARG";;
-            t) 
-                type="$OPTARG";;
+            p) 
+                cores="$OPTARG";;
+
 			\?)
 				feedback::sayfrom "Unknown parameter option." "error"
 				exit;;
 		esac
 	done
 fi
+
+				
 
 #######################################################
 # DEALING WITH DATA STREAM STDIN == STDOUT (terminal)
@@ -80,12 +86,12 @@ if [[ $isPipe = 0 ]]; then
 	eraseFile=0
 
 
-    while getopts t: option; 
+    while getopts p: option; 
     do
         case "${option}" in
                 
-        t)
-            type="$OPTARG";;
+        p)
+            cores="$OPTARG";;
                     
         \?)
             feedback::sayfrom "Unknown parameter option." "error"
@@ -95,33 +101,12 @@ if [[ $isPipe = 0 ]]; then
     done 
 fi
 
-# To this point we want both parameters (-i and -p ) to be present, if not then exit.
-# thanks to: https://unix.stackexchange.com/questions/621004/bash-getopts-mandatory-arguments
-shift "$(( OPTIND - 1 ))"
-if [ -z "$inputFile" ] || [ -z "$type" ]; then
-        feedback::sayfrom "Missing -i or -t option"  "error"
-        exit 1
-fi
 
-# Asses data type. In future version we could implement the function
-# file::guess_sequence_type() By now we have to rely on user definition of data type.
-if [[ "$type" == "P"  || "$type" == "p" ]]; then 
-    
-    dataType="prot"
-    
-elif [[ "$type" == "N"  || "$type" == "n" ]]; then 
 
-    dataType="nuc"
 
-else
-
-    feedback::sayfrom "-t option should be P,p, N or n." "error"
-	exit 1
-
-fi
 
 #####################################################################
-# To this point we have a file and a valid data type.
+# To this point we have a file.
 #####################################################################
 
 # ------ Check if file exists -------
@@ -131,28 +116,43 @@ if [[ $fileExists -eq 1 ]];then
 	exit 1
 fi
 
-# ------ Check if it is a valid fasta file -------
-isFasta=$(file::is_fasta $inputFile) 
-if [[ $isFasta == "0" ]]; then
-	true
-fi
+
 
 #####################################################################
 #                       SCRIPT'S CORE
 #####################################################################
 
-# ---- Working on nucleotide data
-seqNumber=$($BIOBASH_HOME/source/bb_count_seqs -i $inputFile)
-echo "File            : $(file::name $inputFile)"
-echo "Sequences       : $seqNumber"
+# Note that the sed part in this pipe is used to change any "";"" for "_". Because we are going
+# to use ";" as field delimiter to put all the string into an array (in a next step). So if sequence name has a ";" in its name
+# we are going to skrew it up. This was necessary because something went wrong with tabs and spaces and it was nearly impossible
+# to put the string into an array with those delimiters. Moreover "tr" was the only command capable of doing the correct substitution.
+result=$(${BIOBASH_BIN_OS}/seqkit stats -a -b -T $inputFile -j $cores | tail -n 1 | sed 's/;/_/' | tr "\t" ";")
+
+#Put everything into an array
+resultArray=( $(string::split $result ";") )
 
 
-if [[ $dataType = "nuc" ]]; then
+#Uncomment for debugging only
+#for i in "${array[@]}"; do	echo $i done
 
-	# FASTQ?
-	isFastq=$(file::is_fastq $inputFile)
-	if [[  $isFastq -eq 0  ]];then
+
+
+#--- Check data type and define headers and other stuff accordingly ---
+isFasta=$(file::is_fasta $inputFile) 
+if [[ $isFasta == "0" ]]; then
+
+	# If we use case insensitive "i" option in grep, search for "N", running time rises up to ~3X.
+	N=$(grep -e "^>" -v  $inputFile | grep -o -e  "N" | wc -l | tr -d ' ')
+	percN=$(echo "scale=3; (($N)*100)/${resultArray[4]}" | bc)
 		
+	# --- OUTPUT ---
+	fileName=$(file::name $inputFile)
+		echo "File	NumSeqs	Bases	Ns	%Ns	minL	maxL	N50	%GC"
+		echo "${resultArray[0]}	${resultArray[3]}	${resultArray[4]}	${N}	${percN}	${resultArray[5]}	${resultArray[7]}	${resultArray[12]}	${resultArray[15]}"
+		
+	
+else
+
 		outFile=$(file::make_temp_file)
 		eraseOutFile=0
 
@@ -171,110 +171,29 @@ if [[ $dataType = "nuc" ]]; then
 
 		echo "Total residues  : ${T}"
 		echo "Length (min-max): ${minL}-${maxL}"
-		echo "%G (average)    : ${G}"
-		echo "%C (average)    : ${C}"
-		echo "%N (average)    : ${N}"
-		echo "--"
-		#cat $outFile | sed 1d
-		
-
-	else
-
-		outFile=$(file::make_temp_file)
-		eraseOutFile=0
-		#infoseq -sequence $inputFile -auto -stdout -only -name -length -pgc -desc
-		infoseq -sequence ${inputFile} -auto -outfile ${outFile} -only -name -length -pgc -desc -noheading
-		
-		
-		# Maybe there is a more elegant way of obtaining max and min lengths, but for now...
-		# IMPORTANT to use "-n" on sort for numerical stuff.
-		maxL=$(awk '{ print $2 }' $outFile | sort -rn | head -n 1)
-		minL=$(awk '{ print $2 }' $outFile | sort -rn | tail -n 1)
-
-		#awk '{ print $2 }' $outFile | sort -h > A
-		#exit
-
-		minGC=$(awk '{ print $3 }' $outFile | sort -rn | tail -n 1)
-		maxGC=$(awk '{ print $3 }' $outFile | sort -rn | head -n 1)
-
-		total=$(grep -v  -e "^>" $inputFile | tr -d '\n' | wc -m | tr -d ' ')
-		N=$(grep -e "^>" -v  $inputFile | grep -o -e "N" | wc -l | tr -d ' ')
-		perc=$(echo "(($N)*100)/$total" | bc)
-		
-		# --- GET N50 ---
-		
-		#get all Lengths, sort from Max to min (key) and replace new lines by ";"
-		allL=$(cat $outFile | awk '{ print $2 }' | sort -rn | tr "\n" ";")
-		
-		#Remove last ";"
-		allL=$(string::rstrip ${allL} ';')
-
-		#Put everything into an array
-		seqLengths=( $(string::split $allL ";") )
-
-
-		sum=0
-		index=0
-		# For N50 threshold is the value that contains approximately the 50% of the assembly. 
-		threshold=$(echo "(50*${total})/100" | bc)
-		
-		for i in "${seqLengths[@]}"; do
-			let sum+=$i
-			
-			# If sum value equals or is greater than threshold, we have reached the N50.
-
-			# Nevertheless it is important to note that in some cases the contig that satisfies
-			# this condition can over pass the treshold and be far away from it, even more
-			# than the contig that did not satisfied the condition. For example:
-			# Assembly: 100
-			# Threshold: 50
-			# Contigs: 25, 20, 15, 5, 5, 5...
-			# Sum:
-			# 25  +  20 +  15  +  5  +  5  +  4  +  3 ...
-			#         |     |     |     |
-			#	      45    60    65    70 .....
-			#
-			#  45 is just 5 bases from 50
-			#  60 is 15 bases away from 50
-			#
-			# In this case, the N50 should be 45 or 60? I think 45, the latter (60)
-			# looks more like a N60 or so.
-			
-			if [[ $sum -ge $threshold ]]; then
-
-				n50="${seqLengths[$index]}"
-				break
-			fi
-
-			#Increment index
-			let index++
-
-		done
-
-
-		# --- OUTPUT ---
-		echo "Total residues  : ${total}"
-		echo "Length (min-max): ${minL}-${maxL}"
-		echo "%GC (min-max)   : ${minGC}-${maxGC}"
-		echo "Number of N's   : ${N}"
-		echo "%N's            : ${perc}"
-		echo "N50             : $n50"
-		
-		
-
+		echo "%G              : ${G}"
+		echo "%C              : ${C}"
+		echo "%N              : ${N}"
 		#echo "--"
-		#echo "Name	Length	%GC	Description"
-		#cat $outFile
-
-	fi
-
+		#cat $outFile | sed 1d
 fi
 
+exit
 
-# ----  Working on protein data
-if [[ $dataType = "prot" ]]; then
 
-	pepstats -sequence $inputFile -auto -stdout
+
+
+
+# When output comes from STDIN Seqkit shows the path to the temporary file created
+# so we need this conditional to get rid of it (the "sed" part.)
+#https://unix.stackexchange.com/questions/595839/how-to-remove-column-from-file-without-altering-format
+if [ $isPipe = 0 ];then
+
+	$BIOBASH_BIN_OS/seqkit stats -a -b $inputFile -j $cores| sed -r 's/^[^[:blank:]]+[[:blank:]]+//'
+
+else
+
+	$BIOBASH_BIN_OS/seqkit stats  -a -b  $inputFile -j $cores | awk -v v="$ns" '{print $0,  v}'
 
 fi
 

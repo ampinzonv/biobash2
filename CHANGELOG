@@ -1,7 +1,22 @@
-2026-01-27
+2023_02-10
+* sequence_info improved performance. We sacrifice N90 for that.
+* sequence_info fasta analysis complete.
+
+
+2023_01-31
+* Fixed bug in sequence_info that showed path to temporary file when script was read from STDIN.
+
+2023_01-30
+* Installation was modified to check for cpucores and cpu architecture.
+* Appropriate installation directories created for different architectures. 
+* Seqkit replaces Seqtk.
+* "Seqkit stast" replaces "seqcounts" from EMBOSS in bb_count_seqs.
+* "Seqkit stast" replaces "infoseq" from EMBOSS in bb_sequence_info.
+
+2023-01-27
 * bb_sequence_info now also determines n50 on fasta files.
 
-2026-01-23
+2023-01-23
 * Added a protein test file :apoe_prot.fasta
 * Dummy function (file::guess_sequence_type) to guess if a file holds nucleotide or aminoacid data is added to lib/bb_native/file.sh.
 * Added non production stable bb_sequence_info script.
