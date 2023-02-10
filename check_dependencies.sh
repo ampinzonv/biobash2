@@ -14,6 +14,7 @@ source lib/bb_native/check.sh
 source lib/shml/shml.sh
 
 
+
 echo "
 Before running BioBash installation I must check that some software dependencies are met.
 These are basic components that BioBash needs for its functionality. If any of them

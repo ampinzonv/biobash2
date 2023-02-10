@@ -1,3 +1,11 @@
+2023_02-10
+* sequence_info improved performance. We sacrifice N90 for that.
+* sequence_info fasta analysis complete.
+
+
+2023_01-31
+* Fixed bug in sequence_info that showed path to temporary file when script was read from STDIN.
+
 2023_01-30
 * Installation was modified to check for cpucores and cpu architecture.
 * Appropriate installation directories created for different architectures. 

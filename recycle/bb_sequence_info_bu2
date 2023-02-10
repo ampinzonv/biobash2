@@ -121,61 +121,41 @@ fi
 #####################################################################
 #                       SCRIPT'S CORE
 #####################################################################
-
-# Note that the sed part in this pipe is used to change any "";"" for "_". Because we are going
-# to use ";" as field delimiter to put all the string into an array (in a next step). So if sequence name has a ";" in its name
-# we are going to skrew it up. This was necessary because something went wrong with tabs and spaces and it was nearly impossible
-# to put the string into an array with those delimiters. Moreover "tr" was the only command capable of doing the correct substitution.
-result=$(${BIOBASH_BIN_OS}/seqkit stats -a -b -T $inputFile -j $cores | tail -n 1 | sed 's/;/_/' | tr "\t" ";")
-
-#Put everything into an array
-resultArray=( $(string::split $result ";") )
-
-
-#Uncomment for debugging only
-#for i in "${array[@]}"; do	echo $i done
-
+# No matter which type (FASTA/FASTQ) we perform the whole analysis.
+# There after then we decide which information should be shown accordingly.
+# Note that we get rid of the header, because we will adapt it according to our requirements.
+result=$(${BIOBASH_BIN_OS}/seqkit stats -a -b  $inputFile -j $cores | tail -n 2)
 
 
 #--- Check data type and define headers and other stuff accordingly ---
 isFasta=$(file::is_fasta $inputFile) 
 if [[ $isFasta == "0" ]]; then
+	
+	#Calculate % of N's (Are we overheading the run time just for this kind of info?)
+	#N=$(grep -v "^>" $inputFile | grep "N" -o -i | wc -l | tr -d ' ')
+	#perc=$(echo "(($N)*100)/$total" | bc)
 
-	# If we use case insensitive "i" option in grep, search for "N", running time rises up to ~3X.
-	N=$(grep -e "^>" -v  $inputFile | grep -o -e  "N" | wc -l | tr -d ' ')
-	percN=$(echo "scale=3; (($N)*100)/${resultArray[4]}" | bc)
-		
-	# --- OUTPUT ---
-	fileName=$(file::name $inputFile)
-		echo "File	NumSeqs	Bases	Ns	%Ns	minL	maxL	N50	%GC"
-		echo "${resultArray[0]}	${resultArray[3]}	${resultArray[4]}	${N}	${percN}	${resultArray[5]}	${resultArray[7]}	${resultArray[12]}	${resultArray[15]}"
-		
+	threshold90=$(echo "(90*${total})/100" | bc)
+		for i in "${seqLengths[@]}"; do
+			let sum+=$i
+	
+			#Get N90
+			if [[ $sum -ge $threshold90 ]]; then
+
+				n90="${seqLengths[$index]}"
+				break
+			fi
+
+			#Increment index
+			let index++
+
+		done
+
+	echo "$result"
 	
 else
 
-		outFile=$(file::make_temp_file)
-		eraseOutFile=0
-
-		# We can head -n 3 for short outputs
-		#seqtk fqchk $inputFile | head -n 3 | sed -e 's/;//g' > $outFile
-		seqtk fqchk $inputFile | head -n 3 | sed -e 's/;//g' > $outFile
-		
-		minL=$(head -n 1 $outFile | awk '{ print $2 }')
-		maxL=$(head -n 1 $outFile | awk '{ print $4 }')
-
-		G=$(cat $outFile | sed 1,2d | awk '{ print $5 }')
-		C=$(cat $outFile | sed 1,2d | awk '{ print $4 }')
-		N=$(cat $outFile | sed 1,2d | awk '{ print $7 }')
-		T=$(cat $outFile | sed 1,2d | awk '{ print $2 }')
-		
-
-		echo "Total residues  : ${T}"
-		echo "Length (min-max): ${minL}-${maxL}"
-		echo "%G              : ${G}"
-		echo "%C              : ${C}"
-		echo "%N              : ${N}"
-		#echo "--"
-		#cat $outFile | sed 1d
+	echo "$result"
 fi
 
 exit
