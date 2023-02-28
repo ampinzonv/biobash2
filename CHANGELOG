@@ -1,3 +1,10 @@
+2023_02-14
+* bb_sequence_info finalizada.
+* Posibilidad de mejorar performance en bb_sequence_info se registra como enhancement en github issues.
+
+2023_02-13
+* bashrc_osx and bashrc_linux files updated to reflect 64 bits paths.
+
 2023_02-10
 * sequence_info improved performance. We sacrifice N90 for that.
 * sequence_info fasta analysis complete.

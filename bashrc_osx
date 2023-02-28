@@ -10,9 +10,9 @@
 
 BIOBASH_HOME=/Users/andres/Dev/repo/biobash2
 BIOBASH_LIB=/Users/andres/Dev/repo/biobash2/lib 
-BIOBASH_BIN=/Users/andres/Dev/repo/biobash2/bin
+BIOBASH_BIN=/Users/andres/Dev/repo/biobash2/source
 BIOBASH_OS=osx
-BIOBASH_BIN_OS=/Users/andres/Dev/repo/biobash2/bin/osx
+BIOBASH_BIN_OS=/Users/andres/Dev/repo/biobash2/bin/osx/64
 
 SHML_LIB=/Users/andres/Dev/repo/biobash2/lib/shml/shml.sh
 BASHUTILITY_LIB_PATH=/Users/andres/Dev/repo/biobash2/lib/bash-utility

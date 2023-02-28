@@ -12,7 +12,7 @@ BIOBASH_HOME=/home/apinzon/Dev/repo/biobash2
 BIOBASH_LIB=/home/apinzon/Dev/repo/biobash2/lib 
 BIOBASH_BIN=/home/apinzon/Dev/repo/biobash2/bin
 BIOBASH_OS=linux
-BIOBASH_BIN_OS=/home/apinzon/Dev/repo/biobash2/bin/linux
+BIOBASH_BIN_OS=/home/apinzon/Dev/repo/biobash2/bin/linux/64
 
 SHML_LIB=/home/apinzon/Dev/repo/biobash2/lib/shml/shml.sh
 BASHUTILITY_LIB_PATH=/home/apinzon/Dev/repo/biobash2/lib/bash-utility

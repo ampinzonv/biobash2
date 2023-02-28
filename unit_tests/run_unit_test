@@ -4,5 +4,6 @@
 
 source ./unit_test_functions.sh
 
-
 test_count_seqs
+test_extract_subset_from_list
+test_get_fasta_headers
