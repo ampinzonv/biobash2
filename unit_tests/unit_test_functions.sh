@@ -21,10 +21,27 @@ test_hello_world() {
 # $2 Expected outcome
 eval_outcome() {
 
-    if [ "$1" -ne "$2" ]; then
-        feedback::say "Failed" "error"
+    # Is this float?
+    if [[ $1 =~ [\.] || $2 =~ [\.] ]]
+        then
+            # Transform the comparison to a binary comparison using BC.
+            # Output: 1 if equal, 0 if not equal.
+            # Check: https://stackoverflow.com/questions/25612017/integer-expression-expected-bash
+            v=$(echo "$1 == $2" | bc -l)
+
+            if [ "$v" -eq "0" ]; then
+            feedback::say "Failed" "error"
+        else
+            feedback::say "Success!" "success"
+        fi
+    
     else
-        feedback::say "Success!" "success"
+        # Since we have integer values we can make a direct comparison.
+        if [ "$1" -ne "$2" ]; then
+            feedback::say "Failed" "error"
+        else
+            feedback::say "Success!" "success"
+        fi
     fi
 }
 
@@ -110,14 +127,26 @@ test_get_fasta_headers() {
 
 test_get_nr_list() {
     #Arrange
+    feedback::say "...Testing: get_nr_list" "notice"
+    inputFile=$testData/mets.lst
+    script=$BIOBASH_BIN/bb_get_nr_list
+    outcome=9
+    outcome2=23.07
+
     #Act
+    A=$($script -i $inputFile | wc -l)
+    B=$(cat $inputFile | $script -f | head -n 1 | awk '{print $2}')
+
     #Assert
-    break
+    printf "$fromFile"
+    eval_outcome $A $outcome
+
+    printf "$fromSTDIN"
+    eval_outcome $B $outcome2
+
+    echo ""
 }
 
 test_sequence_info() {
-    #Arrange
-    #Act
-    #Assert
-    break
+  break
 }

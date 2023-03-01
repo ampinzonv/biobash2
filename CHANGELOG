@@ -1,3 +1,7 @@
+2023-04-01
+* Unit testing added to most implemented functions.
+* eval_outcome in unit_test_functions now evals also float numbers.
+
 2023_02-14
 * bb_sequence_info finalizada.
 * Posibilidad de mejorar performance en bb_sequence_info se registra como enhancement en github issues.
