@@ -21,12 +21,15 @@ isPipe=$(io::input_is_pipe)
 # If there are no arguments and not data stream.
 if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
 
-	helpUsage="bb_fasta_info -i [file] -p [Number]
-	Where [file] is  FASTA/FASTQ file. 
-       Processors (-p) Number of processor (cpu cores) to use."
-       
-
 	helpDesc="Displays general information from a FASTA (Nucleotide) or FASTQ file."
+
+	helpUsage="bb_fasta_info -i [file] -p [Integer] -h
+	-i (mandatory) path to FASTA or FASTQ file. 
+	-p (optional) Number of cpu cores to use. Defaults to 1.
+	-h (optional) show header information."
+
+	
+
 
 	# DO NOT FORGET to quote the variables.
 	feedback::help  "$helpDesc" "$helpUsage"
@@ -38,7 +41,7 @@ fi
 cores=1
 
 if [[ $hasArgs = 0 && $isPipe = 1 ]]; then
-	while getopts i:p: option; 
+	while getopts i:p:h option; 
 	do
 		case "${option}" in
 
@@ -46,6 +49,8 @@ if [[ $hasArgs = 0 && $isPipe = 1 ]]; then
                 inputFile="$OPTARG";;
             p) 
                 cores="$OPTARG";;
+			h)
+				showHeader="TRUE";;
 
 			\?)
 				feedback::sayfrom "Unknown parameter option." "error"
@@ -86,12 +91,14 @@ if [[ $isPipe = 0 ]]; then
 	eraseFile=0
 
 
-    while getopts p: option; 
+    while getopts p:h option; 
     do
         case "${option}" in
                 
         p)
             cores="$OPTARG";;
+		h)
+				showHeader="TRUE";;
                     
         \?)
             feedback::sayfrom "Unknown parameter option." "error"
@@ -154,13 +161,18 @@ if [[ $isFasta == "0" ]]; then
 		
 	# --- OUTPUT ---
 	fileName=$(file::name $inputFile)
-		echo "File	NumSeqs	Bases	Ns	%Ns	minL	maxL	N50	%GC"
+
+		if [ "$showHeader" == "TRUE" ];then
+
+			echo "File	NumSeqs	Bases	Ns	%Ns	minL	maxL	N50	%GC"
+		fi
 		echo "${resultArray[0]}	${resultArray[3]}	${resultArray[4]}	${N}	${percN}	${resultArray[5]}	${resultArray[7]}	${resultArray[12]}	${resultArray[15]}"
 		
 	
 else
-
-	echo "file	num_seqs	Bases	min_len	avg_len	max_len	Q1	Q2	Q3	N50	Q20(%)	Q30(%)	GC(%)"
+	if [ "$showHeader" == "TRUE" ];then
+		echo "file	num_seqs	Bases	min_len	avg_len	max_len	Q1	Q2	Q3	N50	Q20(%)	Q30(%)	GC(%)"
+	fi
 	#echo "${resultArray[0]}	${resultArray[3]}	${resultArray[4]}	${resultArray[5]}	${resultArray[6]}	${resultArray[7]}	${resultArray[8]}	${resultArray[9]} ${resultArray[10]}	${resultArray[12]}	${resultArray[15]}"
 		
 		#Info I consider is not necessary
