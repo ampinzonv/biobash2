@@ -109,6 +109,9 @@ if [[ $isFasta == "0" ]];then
 
 	#--- THIS IS THE CORE OF THE SCRIPT
 	grep "^>" "$fastaFile"  | sed -e "s/>//"
+
+	#An alternative option:
+	#awk '/^>/ {print; next; }' $fastaFile | sed -e 's/>//'
 	#---
 
 	# ONLY EXECUTED when data comes from a pipe and temp file was created above.

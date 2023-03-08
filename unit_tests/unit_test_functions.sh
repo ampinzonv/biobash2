@@ -147,6 +147,25 @@ test_get_nr_list() {
     echo ""
 }
 
-test_sequence_info() {
-  break
+test_file_info() {
+
+# NOTICE that this test only checks for the parsing of FASTA files.
+  #Arrange
+    feedback::say "...Testing: file_info" "notice"
+    inputFile=$testData/apoe.fasta
+    script=$BIOBASH_BIN/bb_file_info
+    outcome=48.99
+
+    #Act
+    A=$($script -i $inputFile | awk '{print $9}')
+    B=$(cat $inputFile | $script  |  awk '{print $9}')
+
+    #Assert
+    printf "$fromFile"
+    eval_outcome $A $outcome
+
+    printf "$fromSTDIN"
+    eval_outcome $B $outcome
+
+    echo ""
 }

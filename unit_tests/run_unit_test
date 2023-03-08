@@ -8,3 +8,4 @@ test_count_seqs
 test_extract_subset_from_list
 test_get_fasta_headers
 test_get_nr_list
+test_file_info
