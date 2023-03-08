@@ -1,3 +1,18 @@
+2023-04-01
+* By default sequence_info don't show header information. "-h(eader)" optional flag implemented.
+* unit test for sequence_info_implemented
+
+2023-04-01
+* Unit testing added to most implemented functions.
+* eval_outcome in unit_test_functions now evals also float numbers.
+
+2023_02-14
+* bb_sequence_info finalizada.
+* Posibilidad de mejorar performance en bb_sequence_info se registra como enhancement en github issues.
+
+2023_02-13
+* bashrc_osx and bashrc_linux files updated to reflect 64 bits paths.
+
 2023_02-10
 * sequence_info improved performance. We sacrifice N90 for that.
 * sequence_info fasta analysis complete.
@@ -109,16 +124,20 @@
 * New BIOBASH_OS variable added in setup_environment. Replaces BIOBASH_OS_osx/linux vars.
 * bb_get_fasta_headers is used as started ponit to create a "model" script forfuther dev. 
 
-2022-05-06
+2023-03-07
+* sequence_info changed to file_info. It better reflects what it does: operate over a single/multiple file.
+* dummy sequence_info script added. It operates over individual sequences not whole files.
+
+2023-03-05
 * Added unistallation script
 * Fixed BIOBASH_BIN_OS issue that was not getting the path to OS specific binaries.
 
-2022-05-03
+2023-03-05
 * checkdependencies and installbiobash scripts are stable and perform the minimum necessary
 validations as to be considered "stable".
 * Created a tag with this version of BioBash.
 
-2022-05-03
+2023-03-05
 * installbiobash script was modified, so it performs basic install now. 
 
 2021-12-15

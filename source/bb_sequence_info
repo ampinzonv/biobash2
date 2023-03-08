@@ -1,211 +1,31 @@
 #!/usr/bin/env bash
-# @file bb_fasta_info
-# @brief Displays general information from a FASTA (Nucleotide) or FASTQ file.
+# @file bb_sequence_info
+# @brief Displays general information from every entry in a FASTA (Nucleotide) file.
 # @description 
-#	This function displays statistics from a fasta/fastq  files holding nucleotide  information.
+#	This function displays statistics from every entry in a fasta/fastq  files holding nucleotide  information.
 # @example 
-#	bb_seq_info -i [FILE] -p [INT]
-# @arg -i FASTA/FASTQ file.
-# @arg -p  Processors (optional): Number of processor (cpu cores) to use.
+#	bb_sequence_info -i [FILE] 
+# @arg -i (mandatory) path to FASTA or FASTQ file.
+# @arg 
+# @arg 
 
-# Only source libraries needed.
-source "$BIOBASH_NATIVE_LIB_PATH/io.sh"; 
-source "$BIOBASH_NATIVE_LIB_PATH/file.sh";
-source "$BIOBASH_NATIVE_LIB_PATH/feedback.sh";
-source "$BIOBASH_NATIVE_LIB_PATH/string.sh";
-source "$BIOBASH_NATIVE_LIB_PATH/array.sh";
-
-hasArgs=$(io::script_has_args "$#")
-isPipe=$(io::input_is_pipe)
-
-# If there are no arguments and not data stream.
-if [[ $hasArgs = 1 && $isPipe = 1 ]]; then
-
-	helpUsage="bb_fasta_info -i [file] -p [Number]
-	Where [file] is  FASTA/FASTQ file. 
-       Processors (-p) Number of processor (cpu cores) to use."
-       
-
-	helpDesc="Displays general information from a FASTA (Nucleotide) or FASTQ file."
-
-	# DO NOT FORGET to quote the variables.
-	feedback::help  "$helpDesc" "$helpUsage"
-	exit 0
-fi
+# NOTICE
+# This script has a different behaviour from bb_file_info. Hereby we report
+# general stats for every single sequence in a FASTA file (wether single or multiple).
 
 
-#Define a default value for CPU cores to use.
-cores=1
+# A nice discussion on how to do this using awk can be found here: 
+# https://stackoverflow.com/questions/23992646/sequence-length-of-fasta-file
+# It seems this solution was implemented by swdfrost here: 
+# https://github.com/sdwfrost/biobash/blob/master/lenseq.sh
 
-if [[ $hasArgs = 0 && $isPipe = 1 ]]; then
-	while getopts i:p: option; 
-	do
-		case "${option}" in
+# The --only_id flag is key. Because it allow us to override the whole fasta header description
+# and therefore is easier to retrieve only lengths. This is the output:
+# ID1   sequence-length1
+# ID2   sequence-length2
+# IDn   sequence-lengthn
 
-			i) 
-                inputFile="$OPTARG";;
-            p) 
-                cores="$OPTARG";;
-
-			\?)
-				feedback::sayfrom "Unknown parameter option." "error"
-				exit;;
-		esac
-	done
-fi
-
-				
-
-#######################################################
-# DEALING WITH DATA STREAM STDIN == STDOUT (terminal)
-#
-# Since we have mandatory arguments this is necessary, hwe are here because data
-# comes from a pipe and it should have arguments.
-#######################################################
-
-if [[ $isPipe = 0 ]]; then
-
-
-	# It is key to capture the data stream using $(cat -) and not: $(cat -- "$@")
-    # The latter cuases a lot of problems during pipes with arguments such as:
-    # cat "hola" | bb_get_list -f
-    #check: https://stackoverflow.com/questions/2746553/read-values-into-a-shell-variable-from-a-pipe
-    # 
-    data=$(cat -)
-	inputFile=$(file::make_temp_file)
-	
-    # write to file	
-	echo "$data" > $inputFile
-	
-	#Used to clean up environment
-	eraseFile=0
-
-	#This is  hack used to clean the environment. The only reason we will erase user data
-	# is because we created, as this temporary file.  This flag will let us know that
-	# we can safely erase this file.
-	eraseFile=0
-
-
-    while getopts p: option; 
-    do
-        case "${option}" in
-                
-        p)
-            cores="$OPTARG";;
-                    
-        \?)
-            feedback::sayfrom "Unknown parameter option." "error"
-            echo "${help}"
-            exit;;
-        esac
-    done 
-fi
-
-
-
-
-
-#####################################################################
-# To this point we have a file.
-#####################################################################
-
-# ------ Check if file exists -------
-fileExists=$(file::file_exists $inputFile)
-if [[ $fileExists -eq 1 ]];then
-	feedback::sayfrom "Unable to find file: ${inputFile}." "error"
-	exit 1
-fi
-
-
-
-#####################################################################
-#                       SCRIPT'S CORE
-#####################################################################
-
-# Note that the sed part in this pipe is used to change any "";"" for "_". Because we are going
-# to use ";" as field delimiter to put all the string into an array (in a next step). So if sequence name has a ";" in its name
-# we are going to skrew it up. This was necessary because something went wrong with tabs and spaces and it was nearly impossible
-# to put the string into an array with those delimiters. Moreover "tr" was the only command capable of doing the correct substitution.
-result=$(${BIOBASH_BIN_OS}/seqkit stats -a -b -T $inputFile -j $cores | tail -n 1 | sed 's/;/_/' | tr "\t" ";")
-
-#Put everything into an array
-resultArray=( $(string::split $result ";") )
-
-
-#Uncomment for debugging only
-#for i in "${array[@]}"; do	echo $i done
-
-
-
-#--- Check data type and define headers and other stuff accordingly ---
-isFasta=$(file::is_fasta $inputFile) 
-if [[ $isFasta == "0" ]]; then
-
-	# If we use case insensitive "i" option in grep, search for "N", running time rises up to ~3X.
-	N=$(grep -e "^>" -v  $inputFile | grep -o -e  "N" | wc -l | tr -d ' ')
-	percN=$(echo "scale=3; (($N)*100)/${resultArray[4]}" | bc)
-		
-	# --- OUTPUT ---
-	fileName=$(file::name $inputFile)
-		echo "File	NumSeqs	Bases	Ns	%Ns	minL	maxL	N50	%GC"
-		echo "${resultArray[0]}	${resultArray[3]}	${resultArray[4]}	${N}	${percN}	${resultArray[5]}	${resultArray[7]}	${resultArray[12]}	${resultArray[15]}"
-		
-	
-else
-
-		outFile=$(file::make_temp_file)
-		eraseOutFile=0
-
-		# We can head -n 3 for short outputs
-		#seqtk fqchk $inputFile | head -n 3 | sed -e 's/;//g' > $outFile
-		seqtk fqchk $inputFile | head -n 3 | sed -e 's/;//g' > $outFile
-		
-		minL=$(head -n 1 $outFile | awk '{ print $2 }')
-		maxL=$(head -n 1 $outFile | awk '{ print $4 }')
-
-		G=$(cat $outFile | sed 1,2d | awk '{ print $5 }')
-		C=$(cat $outFile | sed 1,2d | awk '{ print $4 }')
-		N=$(cat $outFile | sed 1,2d | awk '{ print $7 }')
-		T=$(cat $outFile | sed 1,2d | awk '{ print $2 }')
-		
-
-		echo "Total residues  : ${T}"
-		echo "Length (min-max): ${minL}-${maxL}"
-		echo "%G              : ${G}"
-		echo "%C              : ${C}"
-		echo "%N              : ${N}"
-		#echo "--"
-		#cat $outFile | sed 1d
-fi
-
-exit
-
-
-
-
-
-# When output comes from STDIN Seqkit shows the path to the temporary file created
-# so we need this conditional to get rid of it (the "sed" part.)
-#https://unix.stackexchange.com/questions/595839/how-to-remove-column-from-file-without-altering-format
-if [ $isPipe = 0 ];then
-
-	$BIOBASH_BIN_OS/seqkit stats -a -b $inputFile -j $cores| sed -r 's/^[^[:blank:]]+[[:blank:]]+//'
-
-else
-
-	$BIOBASH_BIN_OS/seqkit stats  -a -b  $inputFile -j $cores | awk -v v="$ns" '{print $0,  v}'
-
-fi
-
-
-##################
-# Clening up
-##################
-if [ "$eraseFile" == 0 ];then
-	rm $inputFile
-fi
-if [ "$eraseOutFile" == 0 ];then
-	rm $outFile
-fi
+# then we sort by second field: -k2 (from higher to lower)
+$BIOBASH_BIN_OS/seqkit fx2tab --length --name --only-id "$1" | sort -k2 | head -n 1
 
 exit 0
